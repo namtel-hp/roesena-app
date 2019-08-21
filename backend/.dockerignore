@@ -1,1 +1,4 @@
-node_modules
+bin
+pkg
+src/*.*
+!src/*.go

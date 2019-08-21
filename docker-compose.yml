@@ -1,43 +1,34 @@
 version: '3.5'
 
 services:
-  rsn-backend:
-    container_name: rsn-backend-container
+  go:
     build:
-      # set the build-context of this Dockerfile
       context: ./backend/
       dockerfile: Dockerfile
-    volumes:
-      # this anonymous volume prevents the node_modules from being overwritten
-      - '/usr/src/app/node_modules'
     links:
-      - rsn-database
-  rsn-app:
-    container_name: rsn-app-container
+      - mongo
+  svelte:
     build: 
-      # set the build-context of this Dockerfile
       context: ./frontend/
       dockerfile: Dockerfile
     volumes:
-      # the volume needs path to /frontend/ again, because build-context only sets context for the Dockerfile
       - './frontend/:/usr/src/app'
       # this anonymous volume prevents the node_modules from being overwritten
       - '/usr/src/app/node_modules'
-  rsn-database:
-    container_name: rsn-database-container
-    build:
-      context: ./database/
-      dockerfile: Dockerfile
+    ports:
+      - 35729:35729
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
     volumes:
-      - './database/storage:/data/'
-  rsn-rev-proxy:
-      container_name: rsn-rev-proxy-container
+      - ./database/storage:/data/db
+  nginx:
       build:
-        # set the build-context of this Dockerfile
         context: ./nginx/
         dockerfile: Dockerfile
       ports:
-        - 80:80
+        - 5000:80
       links:
-      - rsn-backend
-      - rsn-app
+      - go
+      - svelte

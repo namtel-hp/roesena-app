@@ -10,7 +10,9 @@ frontend/out-tsc
 *.PNG
 
 # dependencies
-node_modules/
+.DS_Store
+node_modules
+bundle.*
 
 # database content
 storage/
@@ -49,3 +51,12 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# built go files
+bin
+# built go packages
+pkg
+# external go packages
+go.mongodb.org
+golang.org
+github.com
