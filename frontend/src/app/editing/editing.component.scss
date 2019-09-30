@@ -1,0 +1,33 @@
+@import '../shared/partials/colors.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  nav {
+    display: flex;
+    width: 100%;
+    background-color: $primary;
+    // justify-content: center;
+
+    div {
+      flex: 1;
+      max-width: 200px;
+      font-size: 2rem;
+      text-align: center;
+      color: $font;
+      padding: .2rem;
+
+      &.active {
+        background-color: $font-secondary;
+      }
+    }
+  }
+
+
+  .editors {
+    // background-color: $inactive;
+    // border: 2px solid $inactive;
+    // border-top: none;
+  }
+}
