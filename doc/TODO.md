@@ -16,6 +16,8 @@
 - add "this site uses cookies" popup
 - then after login directly navigate back to the page he came from
 - think of good way to check authentication
+  - add query type in GraphQL named "me" and return Person object and set cookie (to replace restore)
+  - login and logout should be a mutation
 - especially for adding elements
 
 ### Ideas
@@ -25,16 +27,14 @@
   - level 4 = presidency
   - level 3 = group leaders
   - level 2 = members
-  - level 1 = guest
+  - level 1 = guest (not logged in)
 - then comparisons for access allowance can be done with:
-  
-```go
-if resource.needed_authority_level > my.authority_level {
-    deny_access()
-} else {
-    grant_access()
-}
-```
+
+## GraphQL
+
+- multiple connections from middleware to database are opened atm, clean that up!
+  - maybe move resolvers out of classes and use decorators to inject a connection
+- put the complete image type as an array in the article, not just the id, so a complete article with images and everything can be loaded in one request
 
 ## Articles that helped
 
