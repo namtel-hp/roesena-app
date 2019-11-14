@@ -1,25 +1,35 @@
-@import './colors.scss';
-
 input.underlined {
   outline: none;
   border: none;
-  border-bottom: 1px solid $secondary;
+  border-bottom: 1px solid var(--secondary);
   font-size: 1rem;
+
+  &::placeholder {
+    font-style: italic;
+  }
+
+  &:invalid {
+    border-color: var(--primary);
+  }
 }
 
 textarea.box {
   outline: none;
-  border: 1px solid $secondary;
+  border: 1px solid var(--secondary);
   resize: none;
   font-size: 1rem;
   font-family: Roboto;
+
+  &::placeholder {
+    font-style: italic;
+  }
 }
 
 input.underlined,
 textarea.box {
-  transition: border-color ease-out .2s;
+  transition: border-color ease-out 0.2s;
 
   &:focus {
-    border-color: $primary;
+    border-color: var(--primary);
   }
 }

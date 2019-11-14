@@ -1,62 +1,49 @@
-import express, { Response, Request } from 'express';
-import expressGql from 'express-graphql'
-import { buildSchema } from "graphql";
-import fs from 'fs';
+import express from 'express';
+import expressGQL from 'express-graphql';
+import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser';
 
+import { schema } from './GraphQL/schema';
 import { getAuthLevel } from './context';
-import { article, articles, newArticle, updateArticle, deleteArticle } from './article';
-import { me, login, logout, changePw } from './auth/authResolver';
-import { image, images, newImage, updateImage, deleteImage } from './image';
-import { person, persons } from './person/personResolvers';
-import { events } from './events';
 
-(() => {
-  // create the express-server instance
-  const app = express();
-  // use a middleware to parse the cookies
-  app.use(require('cookie-parser')());
+// create the express-server instance
+const app = express();
+// use a middleware to parse the cookies
+app.use(cookieParser());
+// add extra body parser plugin to allow 10 mb file uploads
+app.use(bodyParser({limit: '10mb'}));
+// use the graphql middleware
+app.use('/graphql', (req, res) => {
+  return expressGQL({
+    schema,
+    graphiql: true,
+    context: (async (request, response) => {
+      const authLevel = await getAuthLevel(request);
+      return {
+        authLevel,
+        request,
+        response
+      };
+    })(req, res)
+  })(req, res);
+});
+// start the graphql server
+let server;
+function startServer() {
+  server = app.listen(4000, () => console.log('Express GraphQL Server running!'));
+}
+startServer();
 
-  // the actual graphql handler
-  app.use('/graphql', (req, res) => {
-    return expressGql({
-      schema: buildSchema(
-        fs.readFileSync('schema.graphql').toString()
-      ),
-      // errors in the resolvers do not have to be catched, the gql lib will automatically catch them and put them into the response
-      // first argument in the handler funcs are the arguments, the second part is the context
-      // root is part of the context???
-      rootValue: {
-        me,
-        login,
-        logout,
-        changePw,
-        persons,
-        person,
-        articles,
-        article,
-        images,
-        image,
-        newImage,
-        updateImage,
-        deleteImage,
-        newArticle,
-        updateArticle,
-        deleteArticle,
-        events
-      },
-      graphiql: true,
-      // the context contains the authLevel of the user from the current cookie, aswell as the request and the response
-      // context is async, which means it returns a Promise!
-      context: (async (request: Request, response: Response) => {
-        // const maker = new ContextMaker(request);
-        const authLevel = await getAuthLevel(request);
-        return {
-          authLevel,
-          request,
-          response
-        }
-      })(req, res)
-    })(req, res);
+declare const module: any;
+
+// webpack hot reloading
+if (module.hot) {
+  module.hot.accept(() => {
+    if (server) {
+      server.close();
+    }
+    startServer();
   });
-  app.listen(4000, () => console.log('Express GraphQL Server running!'));
-})();
+  // when changes were detected app needs to restart -> shut down server here
+  module.hot.dispose(() => server.close());
+}

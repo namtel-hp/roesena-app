@@ -1,109 +1,90 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { Component, OnDestroy, ViewContainerRef } from '@angular/core';
+import { Observable, Subscription, of } from 'rxjs';
 
-import { Image } from 'src/app/interfaces';
+import { Image, ImageMetadata } from 'src/app/interfaces';
+import { ImagesGQL } from 'src/app/GraphQL/query-services/all-images-gql.service';
+import { map, catchError } from 'rxjs/operators';
+import { UpdateImageGQL } from 'src/app/GraphQL/mutation-services/image/updateImage-gql.service';
+import { NewImageGQL } from 'src/app/GraphQL/mutation-services/image/newImage-gql.service';
+import { DeleteImageGQL } from 'src/app/GraphQL/mutation-services/image/deleteImage-gql.service';
+import { PopupService } from 'src/app/popup/popup.service';
 
 @Component({
   selector: 'app-image-editing',
   templateUrl: './image-editing.component.html',
   styleUrls: ['./image-editing.component.scss']
 })
-export class ImageEditingComponent implements OnInit {
-
-  public images = new BehaviorSubject<{ description: string, tags: string[], _id: string, isEditing: boolean }[]>([]);
+export class ImageEditingComponent implements OnDestroy {
+  public images: Observable<ImageMetadata[]>;
+  public editingId: string = undefined;
   private subs: Subscription[] = [];
 
-  constructor(private apollo: Apollo) {
-    this.loadImages();
+  constructor(
+    private imagesGql: ImagesGQL,
+    private updateImageGql: UpdateImageGQL,
+    private newImageGql: NewImageGQL,
+    private deleteImageGql: DeleteImageGQL,
+    private popServ: PopupService,
+    private container: ViewContainerRef
+  ) {
+    this.images = this.imagesGql.watch().valueChanges.pipe(
+      map(el => el.data.images),
+      catchError(() => {
+        this.popServ.flashPopup('could not fetch data!', this.container);
+        return of([]);
+      })
+    );
   }
 
-  ngOnInit() { }
-
-  private loadImages() {
-    this.subs.push(this.apollo.watchQuery<{ images: { _id: string, description: string, tags: string[] }[] }>({
-      query: gql`
-      query GetImages {
-        images {
-          _id
-          description
-          tags
-        }
-      }`
-    }).valueChanges.subscribe({
-      next: result => this.images.next(
-        // destructure returned image and add the isEditing value to it
-        result.data.images.map(({ _id, description, tags }) => ({ _id, description, tags, isEditing: false }))
-      )
-    }));
+  ngOnDestroy() {
+    this.subs.forEach(el => el.unsubscribe());
   }
 
-  public onSave(data) {
-    if (data._id) {
+  public onSave(img: Image) {
+    const { _id, data, description, tags } = img;
+    if (_id) {
       // update existing image
-      const updateImageMutation = gql`
-        mutation UpdateImage {
-          updateImage(_id: "${data._id}", description: "${data.description}", image: "${data.image}", tags: ${JSON.stringify(data.tags)}) {
-              _id
-              description
-              tags
-              image
+      this.subs.push(
+        this.updateImageGql.mutate({ _id, data, description, tags }).subscribe({
+          next: () => this.popServ.flashPopup('Bild bearbeitet', this.container),
+          error: () => this.popServ.flashPopup('Bearbeiten fehlgeschlagen', this.container),
+          complete: () => {
+            // refetch the images, will cause the images Observable to emit the new values
+            this.imagesGql.watch().refetch();
+            // reset editing id
+            this.editingId = undefined;
           }
-        }
-      `;
-      this.subs.push(this.apollo.mutate<{ updateImage: Image }>({
-        mutation: updateImageMutation
-      }).subscribe({
-        next: result => {
-          const { _id, description, tags } = { ...result.data.updateImage };
-          this.images.next([...this.images.getValue(), { _id, description, tags, isEditing: false }]);
-        }
-      }));
+        })
+      );
     } else {
       // add new image
-      const newImageMutation = gql`
-        mutation NewImage {
-          newImage(description: "${data.description}", image: "${data.image}", tags: ${JSON.stringify(data.tags)}) {
-              _id
-              description
-              tags
-              image
+      this.subs.push(
+        this.newImageGql.mutate({ data, description, tags }).subscribe({
+          next: () => this.popServ.flashPopup('Bild hinzugefügt', this.container),
+          error: () => this.popServ.flashPopup('Hinzufügen fehlgeschlagen', this.container),
+          complete: () => {
+            // refetch the images, will cause the images Observable to emit the new values
+            this.imagesGql.watch().refetch();
+            // reset editing id
+            this.editingId = undefined;
           }
-        }
-      `;
-      this.subs.push(this.apollo.mutate<{ newImage: Image }>({
-        mutation: newImageMutation
-      }).subscribe({
-        next: result => console.log(result.data.newImage)
-      }));
+        })
+      );
     }
   }
 
-  public onEdit(index) {
-    const updatedImages = this.images.getValue();
-    updatedImages[index].isEditing = true;
-    this.images.next(updatedImages);
-  }
-
-  public onDelete(id) {
-    const deleteImageMutation = gql`
-        mutation DeleteImage {
-          deleteImage(_id: "${id}")
+  public onDelete(id: string) {
+    this.subs.push(
+      this.deleteImageGql.mutate({ _id: id }).subscribe({
+        next: () => this.popServ.flashPopup('Bild gelöscht', this.container),
+        error: err => this.popServ.flashPopup('Löschen fehlgeschlagen', this.container),
+        complete: () => {
+          // refetch the images, will cause the images Observable to emit the new values
+          this.imagesGql.watch().refetch();
+          // reset editing id
+          this.editingId = undefined;
         }
-      `;
-    this.subs.push(this.apollo.mutate<{ deleteImage: boolean }>({
-      mutation: deleteImageMutation
-    }).subscribe({
-      next: result => {
-        if (result.data.deleteImage) {
-          // deleting worked, remove image from view
-          this.images.next(this.images.getValue().filter(el => el._id !== id));
-        } else {
-          // error, display some kind of message
-          console.log(result.errors);
-        }
-      }
-    }));
+      })
+    );
   }
 }

@@ -9,6 +9,7 @@
 ## Database
 
 - change db collection names? persons may not fit very well
+- remove document links when deleting the document itself (remove person from events when person gets deleted)
 
 ## Login
 
@@ -27,14 +28,12 @@
   - level 4 = presidency
   - level 3 = group leaders
   - level 2 = members
-  - level 1 = guest (not logged in)
-- then comparisons for access allowance can be done with:
+  - level 1 = guest
+- then comparisons for access allowance should be done before providing data!
 
 ## GraphQL
 
-- multiple connections from middleware to database are opened atm, clean that up!
-  - maybe move resolvers out of classes and use decorators to inject a connection
-- put the complete image type as an array in the article, not just the id, so a complete article with images and everything can be loaded in one request
+- have a look at nested types (images in articles, persons in events -> not just id, but entire person/image)
 
 ## Articles that helped
 

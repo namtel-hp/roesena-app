@@ -1,15 +1,157 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, ViewContainerRef } from '@angular/core';
+import { Observable, Subscription, of } from 'rxjs';
+import { map, catchError, take } from 'rxjs/operators';
+
+import { Event, Person } from 'src/app/interfaces';
+import { PersonsGQL } from 'src/app/GraphQL/query-services/all-persons-gql.service';
+import { UpdateEventGQL } from 'src/app/GraphQL/mutation-services/event/updateEvent-gql.service';
+import { PopupService } from 'src/app/popup/popup.service';
+import { DeleteEventGQL } from 'src/app/GraphQL/mutation-services/event/deleteEvent-gql.service';
+import { NewEventGQL } from 'src/app/GraphQL/mutation-services/event/newEvent-gql.service';
+import { EventsShallowGQL } from 'src/app/GraphQL/query-services/events/all-events-shallow-gql.service';
+import { ActivatedRoute } from '@angular/router';
+import { EventGQL } from 'src/app/GraphQL/query-services/events/event-gql.service';
 
 @Component({
   selector: 'app-event-editing',
   templateUrl: './event-editing.component.html',
   styleUrls: ['./event-editing.component.scss']
 })
-export class EventEditingComponent implements OnInit {
+export class EventEditingComponent implements OnDestroy {
+  list: Observable<{ _id: string; value: string }[]>;
+  public events: Observable<Event[]>;
+  public persons: Observable<Person[]>;
+  private selectedEvent: Event = {
+    _id: undefined,
+    authorityGroup: 1,
+    description: '',
+    endDate: undefined,
+    startDate: undefined,
+    participants: [],
+    title: ''
+  };
 
-  constructor() { }
+  private subs: Subscription[] = [];
 
-  ngOnInit() {
+  constructor(
+    private eventsGQL: EventsShallowGQL,
+    private eventGql: EventGQL,
+    private personsGQL: PersonsGQL,
+    private updateEvGQL: UpdateEventGQL,
+    private newEvGql: NewEventGQL,
+    private deleteEvGql: DeleteEventGQL,
+    private popServ: PopupService,
+    private container: ViewContainerRef,
+    private route: ActivatedRoute
+  ) {
+    this.list = this.eventsGQL.watch().valueChanges.pipe(
+      map(el => el.data.events.map(el => ({ _id: el._id, value: el.title }))),
+      catchError(() => {
+        this.popServ.flashPopup('could not load events', this.container);
+        return of([]);
+      })
+    );
+    this.persons = this.personsGQL.watch().valueChanges.pipe(
+      map(el => el.data.persons),
+      catchError(() => {
+        this.popServ.flashPopup('could not load persons', this.container);
+        return of([]);
+      })
+    );
+    this.subs.push(
+      this.route.paramMap.subscribe({
+        next: params => {
+          const id = params.get('id');
+          if (id) {
+            this.subs.push(
+              this.eventGql
+                .watch({ _id: params.get('id') })
+                .valueChanges.pipe(take(1))
+                .subscribe({
+                  next: result =>
+                    (this.selectedEvent = {
+                      _id: result.data.event._id,
+                      authorityGroup: result.data.event.authorityGroup,
+                      description: result.data.event.description,
+                      participants: result.data.event.participants,
+                      title: result.data.event.title,
+                      startDate: result.data.event.startDate,
+                      endDate: result.data.event.endDate
+                    }),
+                  error: () => this.popServ.flashPopup('could not load event', this.container)
+                })
+            );
+          }
+        }
+      })
+    );
   }
 
+  public isParticipant(id: string): boolean {
+    const res = !!this.selectedEvent.participants.find(part => part.person._id === id);
+    return res;
+  }
+
+  public togglePerson(pers: Person) {
+    if (!!this.selectedEvent.participants.find(part => part.person._id === pers._id)) {
+      // if its already in the array remove it
+      this.selectedEvent.participants = this.selectedEvent.participants.filter(part => part.person._id !== pers._id);
+    } else {
+      // else add it
+      this.selectedEvent.participants.push({ person: pers, amount: undefined });
+    }
+  }
+
+  public saveEvent() {
+    console.log(this.selectedEvent);
+    const { _id, description, title, authorityGroup, startDate, endDate } = this.selectedEvent;
+    // only return the id and amount of participants
+    const participants = this.selectedEvent.participants.map(part => ({
+      amount: part.amount,
+      _id: part.person._id
+    }));
+    if (_id) {
+      // update the event
+      this.subs.push(
+        this.updateEvGQL.mutate({ _id, description, title, authorityGroup, endDate, startDate, participants }).subscribe({
+          next: () => this.popServ.flashPopup('Event bearbeitet', this.container),
+          error: () => this.popServ.flashPopup('Bearbeiten fehlgeschlagen', this.container),
+          complete: () => {
+            // refetch the articles, will cause the articles Observable to emit the new values
+            this.eventsGQL.watch().refetch();
+          }
+        })
+      );
+    } else {
+      // create a new event
+      this.subs.push(
+        this.newEvGql.mutate({ description, title, authorityGroup, endDate, startDate, participants }).subscribe({
+          next: () => this.popServ.flashPopup('Event erstellt', this.container),
+          error: () => this.popServ.flashPopup('Erstellen fehlgeschlagen', this.container),
+          complete: () => {
+            // refetch the articles, will cause the articles Observable to emit the new values
+            this.eventsGQL.watch().refetch();
+          }
+        })
+      );
+    }
+  }
+
+  public deleteEvent() {
+    const id = this.selectedEvent._id;
+    this.subs.push(
+      this.deleteEvGql.mutate({ _id: id }).subscribe({
+        next: () => this.popServ.flashPopup('Event gelöscht', this.container),
+        error: () => this.popServ.flashPopup('Löschen fehlgeschlagen', this.container),
+        complete: () => {
+          // refetch the articles, will cause the articles Observable to emit the new values
+          this.eventsGQL.watch().refetch();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
+  }
 }

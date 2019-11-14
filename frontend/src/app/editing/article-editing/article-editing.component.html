@@ -1,22 +1,30 @@
-<app-search></app-search>
+<app-selection-list [list]="list"></app-selection-list>
 
-<ul class="articleList">
-  <li *ngFor="let article of articles" (click)="selectArticle(article)"> {{article.title}} </li>
+<!-- <ul class="articleList">
+  <li *ngFor="let article of articles | async" (click)="selectArticle(article)"> {{article.title}} <span
+       style="color: red;">delte</span> </li>
   <li (click)="selectArticle(undefined)">neuer Artikel</li>
-  <input type="button" value="Speichern" class="rsn-button" (click)="saveArticle()">
-</ul>
+  <input type="button" value="Speichern" class="rsn-button" >
+</ul> -->
 
 <div class="article">
-  <h1>Titel</h1>
-  <input [(ngModel)]="title" class="underlined">
-  <h1>Inhalt</h1>
-  <textarea cols="30" rows="10" [(ngModel)]="content" class="box"></textarea>
+  <input [(ngModel)]="selectedArticle.title" class="underlined title" placeholder="Titel" />
+  <textarea rows="10" [(ngModel)]="selectedArticle.content" class="box" placeholder="Inahlt"></textarea>
   <h1>Bilder</h1>
   <div class="imageContainer">
-    <div *ngFor="let image of images; let i = index" class="imageContainer" (click)="onSelect(i)"
-      [ngClass]="{'active': selectedArticle.getValue().images.includes(image._id, 0)}">
-      <img [src]="image.image | safeURL">
-      <span> {{image.description}} </span>
+    <div
+      *ngFor="let image of images | async"
+      class="imageContainer"
+      (click)="toggleImageInSelection(image._id)"
+      [ngClass]="{ active: isContainingId(image._id) }"
+    >
+      <app-image [image]="image"></app-image>
+      <span> {{ image.description }} </span>
     </div>
   </div>
+</div>
+
+<div class="buttons">
+  <app-button value="speichern" (click)="saveArticle()"></app-button>
+  <app-button value="löschen" (click)="deleteArticle()"></app-button>
 </div>

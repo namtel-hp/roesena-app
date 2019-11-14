@@ -1,70 +1,36 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 
 import { Image } from 'src/app/interfaces';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { ImageGQL } from 'src/app/GraphQL/query-services/image-gql.service';
+import { map, catchError } from 'rxjs/operators';
+
+const FALLBACK = 'assets/svg/RöSeNa.svg';
 
 @Component({
   selector: 'app-image',
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss']
 })
-export class ImageComponent implements OnInit, OnDestroy {
-
+export class ImageComponent implements OnInit {
   @Input()
-  private id: string;
+  private image: Image | { _id: string };
 
-  @Input()
-  private dynamicId: Observable<string>;
-  private subs: Subscription[] = [];
+  public src: Observable<string>;
 
-  public src = new BehaviorSubject<string>(undefined);
-
-  constructor(private apollo: Apollo) { }
+  constructor(private imageGql: ImageGQL) {}
 
   ngOnInit() {
-    if (this.id) {
-      this.subs.push(this.apollo.watchQuery<{ image: Image }>({
-        query: gql`
-        query GetImages {
-          image(_id: "${this.id}") {
-            image
-          }
-        }`
-      }).valueChanges.subscribe({
-        next: result => this.src.next(result.data.image.image),
-        error: () => this.src.next('assets/svg/RöSeNa.svg')
-      }));
-    } else if (this.dynamicId) {
-      this.subs.push(this.dynamicId
-        .subscribe({
-          next: (id) => {
-            this.src.next(undefined);
-            this.subs.push(this.apollo.watchQuery<{ image: Image }>({
-              query: gql`
-                query GetImages {
-                  image(_id: "${id}") {
-                    image
-                  }
-                }`
-            }).valueChanges.subscribe({
-              next: result => {
-                if (!result.errors && result.data) {
-                  this.src.next(result.data.image.image);
-                }
-              }
-            }));
-          },
-          error: () => this.src.next('assets/svg/RöSeNa.svg')
+    if (!this.image || !this.image._id) {
+      this.src = of(FALLBACK);
+    } else {
+      this.src = this.imageGql.watch({ _id: this.image._id }).valueChanges.pipe(
+        map(el => (el.data.image.data ? el.data.image.data : FALLBACK)),
+        catchError(err => {
+          console.log(err);
+          return of(FALLBACK);
         })
       );
     }
   }
-
-  ngOnDestroy() {
-    this.subs.forEach(sub => sub.unsubscribe());
-  }
-
 }

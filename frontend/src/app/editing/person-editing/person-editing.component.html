@@ -1,1 +1,17 @@
-<p>person-settings works!</p>
+<div *ngFor="let person of (persons | async)" class="person">
+  <!-- <span>{{person.name}}</span> -->
+  <input class="name" type="text" [(ngModel)]="person.name" spellcheck="false">
+  <input class="auth" type="text" [(ngModel)]="person.authorityLevel" spellcheck="false">
+  <svg (click)="onReset(person._id)">
+    <use href="assets/svg/redo-alt-solid.svg#redo-alt-solid" />
+  </svg>
+  <svg (click)="onDelete(person._id)">
+    <use href="assets/svg/trash-alt-regular.svg#trash-alt-regular" />
+  </svg>
+  <svg (click)="onSave(person)">
+    <use href="assets/svg/save-solid.svg#save-solid" />
+  </svg>
+</div>
+
+<input #box type="text" placeholder="neue Person" class="person" (keyup.enter)="onEnter(box.value)"
+  (blur)="box.value = ''">

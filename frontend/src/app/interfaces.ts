@@ -9,13 +9,21 @@ export interface Article {
   date: number;
   title: string;
   content: string;
-  images: string[];
+  images: Image[];
+}
+
+export interface ShallowArticle {
+  _id: string;
+  date: number;
+  title: string;
+  content: string;
+  images: { _id: string }[];
 }
 
 export interface Image {
   _id: string;
   description: string;
-  image: string;
+  data: string;
   tags: string[];
 }
 
@@ -31,5 +39,6 @@ export interface Event {
   description: string;
   startDate: number;
   endDate: number;
-  participants: string[];
+  participants: { person: Person; amount: number }[];
+  authorityGroup: number;
 }
