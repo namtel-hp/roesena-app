@@ -1,30 +1,35 @@
 import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 
-import { eventQueries, eventMutations } from '../events';
-import { authQueries, authMutations } from '../auth';
-import { personQueries, personMutations } from '../person';
-import { imageQueries, imageMutations } from '../image';
-import { articleQueries, articleMutations } from '../article';
+import articleQueries from './queries/ArticleQueries';
+import articleMutations from './mutations/ArticleMutations';
+import authQueries from './queries/AuthQueries';
+import authMutations from './mutations/AuthMutations';
+import eventQueries from './queries/EventQueries';
+import eventMutations from './mutations/EventMutations';
+import imageQueries from './queries/ImageQueries';
+import imageMutations from './mutations/ImageMutations';
+import personQueries from './queries/PersonQueries';
+import personMutations from './mutations/PersonMutations';
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
-      ...eventQueries,
+      ...articleQueries,
       ...authQueries,
-      ...personQueries,
+      ...eventQueries,
       ...imageQueries,
-      ...articleQueries
+      ...personQueries
     })
   }),
   mutation: new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
-      ...eventMutations,
+      ...articleMutations,
       ...authMutations,
-      ...personMutations,
+      ...eventMutations,
       ...imageMutations,
-      ...articleMutations
+      ...personMutations
     })
   })
 });
