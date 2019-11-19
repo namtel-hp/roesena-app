@@ -4,6 +4,12 @@ export interface Person {
   authorityLevel: number;
 }
 
+export interface Group {
+  _id: string;
+  name: string;
+  members: Person[];
+}
+
 export interface Article {
   _id: string;
   date: number;
@@ -40,5 +46,5 @@ export interface Event {
   startDate: number;
   endDate: number;
   participants: { person: Person; amount: number }[];
-  authorityGroup: number;
+  authorityLevel: number;
 }

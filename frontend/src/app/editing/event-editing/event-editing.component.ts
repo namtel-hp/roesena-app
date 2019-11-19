@@ -2,7 +2,7 @@ import { Component, OnDestroy, ViewContainerRef } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { map, catchError, take } from 'rxjs/operators';
 
-import { Event, Person } from 'src/app/interfaces';
+import { Event, Person, Group } from 'src/app/interfaces';
 import { PersonsGQL } from 'src/app/GraphQL/query-services/all-persons-gql.service';
 import { UpdateEventGQL } from 'src/app/GraphQL/mutation-services/event/updateEvent-gql.service';
 import { PopupService } from 'src/app/popup/popup.service';
@@ -11,6 +11,7 @@ import { NewEventGQL } from 'src/app/GraphQL/mutation-services/event/newEvent-gq
 import { EventsShallowGQL } from 'src/app/GraphQL/query-services/events/all-events-shallow-gql.service';
 import { ActivatedRoute } from '@angular/router';
 import { EventGQL } from 'src/app/GraphQL/query-services/events/event-gql.service';
+import { GroupsForArticlesGQL } from './queries/groups-for-articles-gql.service';
 
 @Component({
   selector: 'app-event-editing',
@@ -21,9 +22,10 @@ export class EventEditingComponent implements OnDestroy {
   list: Observable<{ _id: string; value: string }[]>;
   public events: Observable<Event[]>;
   public persons: Observable<Person[]>;
+  public groups: Observable<Group[]>;
   private selectedEvent: Event = {
     _id: undefined,
-    authorityGroup: 1,
+    authorityLevel: 1,
     description: '',
     endDate: undefined,
     startDate: undefined,
@@ -40,10 +42,18 @@ export class EventEditingComponent implements OnDestroy {
     private updateEvGQL: UpdateEventGQL,
     private newEvGql: NewEventGQL,
     private deleteEvGql: DeleteEventGQL,
+    private groupsGql: GroupsForArticlesGQL,
     private popServ: PopupService,
     private container: ViewContainerRef,
     private route: ActivatedRoute
   ) {
+    this.groups = this.groupsGql.watch().valueChanges.pipe(
+      map(el => el.data.groups),
+      catchError(() => {
+        this.popServ.flashPopup('could not load groups', this.container);
+        return of([]);
+      })
+    );
     this.list = this.eventsGQL.watch().valueChanges.pipe(
       map(el => el.data.events.map(el => ({ _id: el._id, value: el.title }))),
       catchError(() => {
@@ -71,7 +81,7 @@ export class EventEditingComponent implements OnDestroy {
                   next: result =>
                     (this.selectedEvent = {
                       _id: result.data.event._id,
-                      authorityGroup: result.data.event.authorityGroup,
+                      authorityLevel: result.data.event.authorityLevel,
                       description: result.data.event.description,
                       participants: result.data.event.participants,
                       title: result.data.event.title,
@@ -102,9 +112,18 @@ export class EventEditingComponent implements OnDestroy {
     }
   }
 
+  addGroup(selectedGroup: Group) {
+    selectedGroup.members.forEach(member => {
+      if (!this.selectedEvent.participants.find(participant => participant.person._id === member._id)) {
+        // if member is not already participant
+        this.selectedEvent.participants.push({ person: member, amount: undefined });
+      }
+    });
+  }
+
   public saveEvent() {
     console.log(this.selectedEvent);
-    const { _id, description, title, authorityGroup, startDate, endDate } = this.selectedEvent;
+    const { _id, description, title, authorityLevel, startDate, endDate } = this.selectedEvent;
     // only return the id and amount of participants
     const participants = this.selectedEvent.participants.map(part => ({
       amount: part.amount,
@@ -113,7 +132,7 @@ export class EventEditingComponent implements OnDestroy {
     if (_id) {
       // update the event
       this.subs.push(
-        this.updateEvGQL.mutate({ _id, description, title, authorityGroup, endDate, startDate, participants }).subscribe({
+        this.updateEvGQL.mutate({ _id, description, title, authorityLevel, endDate, startDate, participants }).subscribe({
           next: () => this.popServ.flashPopup('Event bearbeitet', this.container),
           error: () => this.popServ.flashPopup('Bearbeiten fehlgeschlagen', this.container),
           complete: () => {
@@ -125,7 +144,7 @@ export class EventEditingComponent implements OnDestroy {
     } else {
       // create a new event
       this.subs.push(
-        this.newEvGql.mutate({ description, title, authorityGroup, endDate, startDate, participants }).subscribe({
+        this.newEvGql.mutate({ description, title, authorityLevel, endDate, startDate, participants }).subscribe({
           next: () => this.popServ.flashPopup('Event erstellt', this.container),
           error: () => this.popServ.flashPopup('Erstellen fehlgeschlagen', this.container),
           complete: () => {
