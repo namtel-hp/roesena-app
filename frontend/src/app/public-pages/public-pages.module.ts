@@ -20,12 +20,11 @@ import { HelpComponent } from './help/help.component';
 import { NavBarComponent } from './main/nav-bar/nav-bar.component';
 import { FooterComponent } from './main/footer/footer.component';
 import { MainComponent } from './main/main.component';
-import { NavBarNavigatorsComponent } from './main/nav-bar/nav-bar-navigators/nav-bar-navigators.component';
-import { NavBarMiscComponent } from './main/nav-bar/nav-bar-misc/nav-bar-misc.component';
 import { ImagePageComponent } from './image-page/image-page.component';
 import { SharedModule } from '../shared/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { EventsFilterPipe } from './events/events-filter.pipe';
+import { LogoComponent } from './main/logo/logo.component';
 
 @NgModule({
   declarations: [
@@ -44,10 +43,9 @@ import { EventsFilterPipe } from './events/events-filter.pipe';
     NavBarComponent,
     FooterComponent,
     MainComponent,
-    NavBarNavigatorsComponent,
-    NavBarMiscComponent,
     ImagePageComponent,
-    EventsFilterPipe
+    EventsFilterPipe,
+    LogoComponent
   ],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, PublicRouting, PopupModule, GraphQLModule, SharedModule],
   bootstrap: [MainComponent]
