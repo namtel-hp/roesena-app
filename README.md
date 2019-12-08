@@ -23,4 +23,3 @@ Each time the containers are started with docker-compose the demo data will be a
 ## hints
 
 - clone a single branch from repo: `git clone --single-branch --branch <branchname> <remote-repo>`
-- connect with ssh and a specific ssh-key: `ssh -i ~/.ssh/id_rsa user@80.240.20.232`
