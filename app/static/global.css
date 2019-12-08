@@ -1,0 +1,32 @@
+body {
+  font-family: Roboto;
+  box-sizing: border-box;
+
+  --background: rgb(255, 255, 255);
+  --on-background: rgb(47, 50, 79);
+  --primary: rgb(240, 128, 128);
+  --on-primary: rgb(0, 0, 0);
+  --secondary: rgb(25, 118, 210);
+  --on-secondary: rgb(255, 255, 255);
+  --highlight: rgb(255, 236, 5);
+  --box-border: rgb(119, 119, 119);
+}
+
+html,
+body,
+#sapper {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#sapper {
+  display: flex;
+  flex-direction: column;
+}
+
+* {
+  box-sizing: inherit;
+}

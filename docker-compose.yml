@@ -1,39 +1,23 @@
 version: '3.5'
 services:
-  middleware:
+  # storage of the app
+  mongodb:
     tty: true
+    image: mongo:latest
+  # mongo container to seed the database, not needed after that
+  mongo-seed:
     build:
-      context: ./middleware/
-      dockerfile: $PWD/Docker/dev.middleware.Dockerfile
-    volumes:
-      - './middleware/:/app'
-      - '/app/node_modules'
+      context: ./database
+      dockerfile: seeding.Dockerfile
     links:
-      - mongo
-  angular:
+      - mongodb
+  # sapper app
+  app:
     tty: true
     build:
-      context: ./frontend/
-      dockerfile: $PWD/Docker/dev.frontend.Dockerfile
-    volumes:
-      - './frontend/:/app'
-      - '/app/node_modules'
-  mongo:
-    tty: true
-    build:
-      context: ./database/
-      dockerfile: $PWD/Docker/database.Dockerfile
+      context: ./app
+      dockerfile: docker/prod.Dockerfile
     ports:
-      - 27017:27017
-    volumes:
-      - ./database/storage:/data/db
-  nginx:
-    tty: true
-    build:
-      context: ./proxy/
-      dockerfile: $PWD/Docker/proxy.Dockerfile
-    ports:
-      - 5000:80
+      - 80:3000
     links:
-      - middleware
-      - angular
+      - mongodb
