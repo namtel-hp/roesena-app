@@ -1,3 +1,5 @@
+.PHONY: dev, test, prod
+
 dev:
 	docker-compose down
 	docker-compose up --build

@@ -5,9 +5,9 @@ ENV TZ='Europe/Amsterdam'
 
 WORKDIR /app
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+# COPY package.json package.json
+# COPY package-lock.json package-lock.json
 
-RUN npm install
+# RUN npm install
 
-CMD [ "npm", "run", "dev" ]
+# CMD [ "npm", "run", "dev" ]

@@ -1,0 +1,9 @@
+CREATE TABLE RoeSeNa.Events (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(35) NOT NULL,
+    description TEXT,
+    startDate DATETIME NOT NULL,
+    endDate DATETIME NOT NULL,
+    authorityLevel TINYINT UNSIGNED NOT NULL DEFAULT 5,
+    PRIMARY KEY (id)
+);

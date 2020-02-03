@@ -1,26 +1,20 @@
 version: '3.5'
 services:
-  # storage of the app
-  mongodb:
-    tty: true
-    image: mongo:latest
-  # mongo container to seed the database, not needed after that
-  mongo-seed:
-    build:
-      context: ./app
-      dockerfile: docker/seeding.Dockerfile
-    links:
-      - mongodb
-  # sapper app
-  app:
+  database:
     tty: true
     build:
-      context: ./app
-      dockerfile: docker/prod.Dockerfile
+      context: ./app/database
+      dockerfile: $PWD/app/docker/database.Dockerfile
+
+  middleware:
+    tty: true
+    build:
+      context: ./app/middleware
+      dockerfile: $PWD/app/docker/dev.middleware.Dockerfile
+    restart: always
     ports:
-      - 80:3000
-    # wait for seeding continer to be ready so database acutally has data when app is started
-    depends_on:
-      - mongo-seed
+      - 4000:4000
+    volumes:
+      - './app/middleware:/app'
     links:
-      - mongodb
+      - database
