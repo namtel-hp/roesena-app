@@ -5,5 +5,5 @@ app/cypress/screenshots/
 __sapper__/
 database/storage/
 
-# built api files
-app/api/dist
+# built middleware files
+app/middleware/dist

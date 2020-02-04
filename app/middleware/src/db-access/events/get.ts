@@ -4,12 +4,24 @@ import { dbEvent } from './interface';
 export function getEventById(id: number): Promise<dbEvent> {
   return new Promise(async (resolve, reject) => {
     let connection = await ConnectionProvider.Instance.connection;
-    // WHERE id = ${id}
-    connection.query(`SELECT * from Events;`, (err, rows, fields) => {
+    connection.query(`SELECT * FROM Events WHERE id = ${id};`, (err, results, fields) => {
       if (err) {
         reject(err);
       } else {
-        resolve(rows);
+        resolve(results);
+      }
+    });
+  });
+}
+
+export function getAllEvents(): Promise<dbEvent[]> {
+  return new Promise(async (resolve, reject) => {
+    let connection = await ConnectionProvider.Instance.connection;
+    connection.query(`SELECT * FROM Events;`, (err, results, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
       }
     });
   });

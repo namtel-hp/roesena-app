@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { Server } from 'http';
 
+import { event } from './api/event';
 import { events } from './api/events';
 
 const port = 4000;
@@ -14,7 +15,8 @@ app.use(cookieParser());
 // set json limit in body parser middleware to allow 10 mb file uploads
 app.use(bodyParser.json({ limit: '10mb' }));
 
-app.use('/api/events/:id', events);
+app.use('/api/event/:id', event);
+app.use('/api/events', events);
 
 // start the server
 let server: Server;

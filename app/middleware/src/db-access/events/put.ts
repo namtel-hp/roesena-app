@@ -2,19 +2,18 @@ import { ConnectionProvider } from '../connection';
 import { dbEvent } from './interface';
 import { toDbDate } from '../utils';
 
-export function createEvent(event: dbEvent): Promise<dbEvent> {
+export function updateEvent(id: number, event: dbEvent): Promise<dbEvent> {
   return new Promise(async (resolve, reject) => {
     let connection = await ConnectionProvider.Instance.connection;
     connection.query(
-      `INSERT INTO Events (title, description, startDate, endDate, authorityLevel)
-            VALUES ('${event.title}', '${event.description}', '${toDbDate(event.startDate)}', '${toDbDate(event.endDate)}', ${
-        event.authorityLevel
-      });`,
+      `UPDATE Events SET title = '${event.title}', description = '${event.description}', startDate = '${toDbDate(
+        event.startDate
+      )}', endDate = '${toDbDate(event.endDate)}', authorityLevel = ${event.authorityLevel} WHERE id = ${id};`,
       (err, results, fields) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          resolve(event);
         }
       }
     );
