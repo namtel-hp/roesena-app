@@ -13,6 +13,7 @@ export function updateEvent(id: number, event: dbEvent): Promise<dbEvent> {
         if (err) {
           reject(err);
         } else {
+          event.id = id;
           resolve(event);
         }
       }

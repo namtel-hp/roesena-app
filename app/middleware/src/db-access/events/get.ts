@@ -8,7 +8,7 @@ export function getEventById(id: number): Promise<dbEvent> {
       if (err) {
         reject(err);
       } else {
-        resolve(results);
+        resolve(results[0]);
       }
     });
   });

@@ -8,9 +8,12 @@ services:
 
   middleware:
     tty: true
+    environment:
+      - NODE_ENV=production
+      - TZ='Europe/Amsterdam'
     build:
       context: ./app/middleware
-      dockerfile: $PWD/app/docker/dev.middleware.Dockerfile
+      dockerfile: $PWD/app/docker/middleware.Dockerfile
     restart: always
     ports:
       - 4000:4000

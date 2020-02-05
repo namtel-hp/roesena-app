@@ -14,7 +14,8 @@ export function createEvent(event: dbEvent): Promise<dbEvent> {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          event.id = results.insertId;
+          resolve(event);
         }
       }
     );
