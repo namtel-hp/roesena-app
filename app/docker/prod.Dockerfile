@@ -1,39 +1,57 @@
-FROM node:10-alpine AS builder
+# build the angular app
+FROM node:10-alpine AS angular-builder
 
 WORKDIR /app
 
 ENV NODE_ENV=development
 ENV TZ='Europe/Amsterdam'
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+COPY ./angular/package.json package.json
+COPY ./angular/package-lock.json package-lock.json
 
-#install packages still in dev mode
 RUN npm ci 
 
-ENV NODE_ENV=production
+COPY ./angular /app
 
-COPY . /app
-
-# to be able to build the app here
 RUN npm run build
 
-FROM node:10-alpine
+# build the express server
+FROM node:10 AS express-builder
 
 WORKDIR /app
 
-#install in prod mode now so only needed packages are here
+# dev here to install all dev packages
+ENV NODE_ENV=development
+ENV TZ='Europe/Amsterdam'
+
+COPY ./express .
+
+RUN npm ci
+
+# set prod here to make prod build
+ENV NODE_ENV=production
+
+RUN npm run build
+
+# create the final container with the build contents
+FROM node:10 as final
+
 ENV NODE_ENV=production
 ENV TZ='Europe/Amsterdam'
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+WORKDIR /app
 
-# copy built app from builder stage
-COPY --from=builder /app/__sapper__ __sapper__
-# copy static files from sources
-COPY static static
+COPY ./express/package.json package.json
+COPY ./express/package-lock.json package-lock.json
 
-RUN npm ci 
+RUN npm ci
 
-CMD ["npm", "start"]
+COPY --from=express-builder /app/dist/server.js server.js
+COPY ./express/webpack.common.js webpack.common.js
+COPY ./express/webpack.production.js webpack.production.js
+
+RUN mkdir static
+
+COPY --from=angular-builder /app/dist/frontend static
+
+CMD ["node", "server.js"]

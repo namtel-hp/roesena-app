@@ -1,16 +1,16 @@
-GET http://localhost:4000/api/event/7 HTTP/1.1
+GET http://localhost:5000/api/event/7 HTTP/1.1
 
 ###
 
-DELETE http://localhost:4000/api/event/1 HTTP/1.1
+DELETE http://localhost:5000/api/event/1 HTTP/1.1
 
 ###
 
-GET http://localhost:4000/api/events HTTP/1.1
+GET http://localhost:5000/api/events HTTP/1.1
 
 ###
 
-POST http://localhost:4000/api/events HTTP/1.1
+POST http://localhost:5000/api/events HTTP/1.1
 content-type: application/json
 
 {
@@ -23,7 +23,7 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:4000/api/event/2 HTTP/1.1
+PUT http://localhost:5000/api/event/2 HTTP/1.1
 content-type: application/json
 
 {

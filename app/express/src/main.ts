@@ -18,6 +18,10 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use('/api/event/:id', event);
 app.use('/api/events', events);
 
+if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
+  app.use('/', express.static('static'));
+}
+
 // start the server
 let server: Server;
 function startServer() {

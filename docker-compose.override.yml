@@ -1,15 +1,28 @@
 version: '3.5'
 services:
-  middleware:
-    environment:
-      - NODE_ENV=development
-# services:
-#   app:
-#     build:
-#       dockerfile: docker/dev.Dockerfile
-#     ports:
-#       - 3000:3000
-#       - 10000:10000
-#     volumes:
-#       - ./app:/app
-#       - /app/node_modules
+  express:
+    build:
+      context: ./app/express
+      dockerfile: $PWD/app/docker/express.Dockerfile
+    volumes:
+      - './app/express:/app'
+
+  angular:
+    tty: true
+    build:
+      context: ./app/angular
+      dockerfile: $PWD/app/docker/angular.Dockerfile
+    volumes:
+      - './app/angular/:/app'
+      - '/app/node_modules'
+
+  nginx:
+    tty: true
+    build:
+      context: ./app/dev-proxy/
+      dockerfile: $PWD/app/docker/proxy.Dockerfile
+    ports:
+      - 5000:80
+    links:
+      - express
+      - angular

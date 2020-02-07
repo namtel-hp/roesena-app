@@ -1,6 +1,8 @@
 # base image
 FROM node:10
 
+ENV NODE_ENV=development
+ENV TZ='Europe/Amsterdam'
 # set working directory
 WORKDIR /app
 

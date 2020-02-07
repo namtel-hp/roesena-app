@@ -9,5 +9,6 @@ prod:
 	docker-compose -f docker-compose.yml up --build
 
 test:
-	docker-compose down
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build --exit-code-from cypress --abort-on-container-exit cypress
+	docker build -t angular-test -f ./app/docker/test.angular.Dockerfile ./app/angular
+	docker run --rm angular-test npm run test:headless
+	docker run --rm angular-test npm run e2e

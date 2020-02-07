@@ -11,5 +11,5 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
-      - name: run test compose stack
+      - name: run test stack
         run: make test
