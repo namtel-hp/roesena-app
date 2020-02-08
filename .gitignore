@@ -1,9 +1,16 @@
-.DS_Store
-node_modules/
-src/node_modules/@sapper/
-app/cypress/screenshots/
-__sapper__/
-database/storage/
+# IDE - VSCode
+.vscode
+
+# dependencies
+node_modules
+
+# built angular output
+*/angular/dist
+*/angular/tmp
+*/angular/out-tsc
+
+# test reports
+*/angular/coverage
 
 # built middleware files
-app/middleware/dist
+*/express/dist

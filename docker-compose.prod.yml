@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+  express:
+    tty: true
+    build:
+      context: ./app
+      dockerfile: $PWD/app/docker/prod.Dockerfile
+    restart: always
+    ports:
+      - 5000:4000
+    links:
+      - database

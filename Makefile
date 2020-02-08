@@ -1,14 +1,17 @@
-.PHONY: dev, test, prod
+.PHONY: dev, unit-tests, integration-tests, prod
 
 dev:
-	docker-compose down
-	docker-compose up --build
+	docker-compose down --remove-orphans
+	docker-compose -f docker-compose.dev.yml -f docker-compose.yml up --build
 
 prod:
-	docker-compose down
-	docker-compose -f docker-compose.yml up --build
+	docker-compose down --remove-orphans
+	docker-compose -f docker-compose.prod.yml -f docker-compose.yml up --build
 
-test:
+unit-tests:
 	docker build -t angular-test -f ./app/docker/test.angular.Dockerfile ./app/angular
-	docker run --rm angular-test npm run test:headless
+	docker run --rm -v $(pwd)/coverage:/app/coverage angular-test npm run test:headless
+
+integration-tests:
+	docker build -t angular-test -f ./app/docker/test.angular.Dockerfile ./app/angular
 	docker run --rm angular-test npm run e2e

@@ -1,11 +1,14 @@
 version: '3.5'
 services:
   express:
+    tty: true
     build:
       context: ./app/express
       dockerfile: $PWD/app/docker/express.Dockerfile
     volumes:
       - './app/express:/app'
+    links:
+      - database
 
   angular:
     tty: true
