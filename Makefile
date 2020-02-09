@@ -2,11 +2,11 @@
 
 dev:
 	docker-compose down --remove-orphans
-	docker-compose -f docker-compose.dev.yml -f docker-compose.yml up --build
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 prod:
 	docker-compose down --remove-orphans
-	docker-compose -f docker-compose.prod.yml -f docker-compose.yml up --build
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 
 unit-tests:
 	docker build -t angular-test -f ./app/docker/test.angular.Dockerfile ./app/angular

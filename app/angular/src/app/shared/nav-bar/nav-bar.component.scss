@@ -1,0 +1,55 @@
+:host {
+  z-index: 1;
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  max-width: 75vw;
+  height: 100vh;
+  background-color: var(--background);
+  box-shadow: -0.4rem 0 0.9rem 0.2rem var(--box-border);
+
+  nav {
+    padding: 2rem;
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      cursor: pointer;
+      svg {
+        height: 4rem;
+        width: 8rem;
+      }
+    }
+
+    .separator {
+      $color: var(--secondary);
+      width: 100%;
+      font-size: 0.7rem;
+      margin-block-start: 3rem;
+      color: $color;
+      border-top: 1px solid $color;
+    }
+
+    ul {
+      list-style-type: none;
+      font-size: 1.2rem;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0;
+        margin-block-end: 0.5rem;
+        color: var(--on-background);
+        transition: 0.2s ease-out color;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--secondary);
+        }
+      }
+    }
+  }
+}
