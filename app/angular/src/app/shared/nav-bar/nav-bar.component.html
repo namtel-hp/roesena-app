@@ -1,24 +1,29 @@
-<nav>
-  <div routerLink="/" class="logo">
-    <svg><use href="assets/RöSeNa.svg#roesena" /></svg>
-    <span>RöSeNa</span>
-  </div>
-  <div class="separator">Veranstaltungen</div>
-  <ul>
-    <li routerLink="events">Events</li>
-    <li routerLink="calendar">Kalender</li>
-    <li routerLink="edit">Bearbeiten</li>
-  </ul>
-  <div class="separator">Über uns</div>
-  <ul>
-    <li routerLink="groups">Gruppen</li>
-    <li routerLink="archive">Archiv</li>
-    <li routerLink="images">Bilder</li>
-  </ul>
-  <div class="separator">Externes</div>
-  <ul>
-    <li routerLink="press">Presse</li>
-    <li routerLink="references">Impressum</li>
-    <li routerLink="links">Links</li>
-  </ul>
-</nav>
+<!-- <nav> -->
+<div routerLink="/" class="logo">
+  <svg><use href="assets/RöSeNa.svg#roesena" /></svg>
+  <span>RöSeNa</span>
+</div>
+<div class="separator">Veranstaltungen</div>
+<ul>
+  <li routerLink="events" routerLinkActive="active">Events</li>
+  <li routerLink="calendar" routerLinkActive="active">Kalender</li>
+  <li routerLink="edit" routerLinkActive="active">Bearbeiten</li>
+</ul>
+<div class="separator">Über uns</div>
+<ul>
+  <li routerLink="groups" routerLinkActive="active">Gruppen</li>
+  <li routerLink="archive" routerLinkActive="active">Archiv</li>
+  <li routerLink="images" routerLinkActive="active">Bilder</li>
+</ul>
+<div class="separator">Externes</div>
+<ul>
+  <li routerLink="press" routerLinkActive="active">Presse</li>
+  <li routerLink="references" routerLinkActive="active">Impressum</li>
+  <li routerLink="links" routerLinkActive="active">Links</li>
+</ul>
+<div class="burger" (click)="isVisible = !isVisible">
+  <span class="line upper"></span>
+  <span class="line middle"></span>
+  <span class="line lower"></span>
+</div>
+<!-- </nav> -->
