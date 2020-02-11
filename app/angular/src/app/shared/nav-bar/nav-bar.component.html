@@ -1,29 +1,38 @@
-<!-- <nav> -->
-<div routerLink="/" class="logo">
-  <svg><use href="assets/RöSeNa.svg#roesena" /></svg>
-  <span>RöSeNa</span>
-</div>
-<div class="separator">Veranstaltungen</div>
-<ul>
-  <li routerLink="events" routerLinkActive="active">Events</li>
-  <li routerLink="calendar" routerLinkActive="active">Kalender</li>
-  <li routerLink="edit" routerLinkActive="active">Bearbeiten</li>
-</ul>
-<div class="separator">Über uns</div>
-<ul>
-  <li routerLink="groups" routerLinkActive="active">Gruppen</li>
-  <li routerLink="archive" routerLinkActive="active">Archiv</li>
-  <li routerLink="images" routerLinkActive="active">Bilder</li>
-</ul>
-<div class="separator">Externes</div>
-<ul>
-  <li routerLink="press" routerLinkActive="active">Presse</li>
-  <li routerLink="references" routerLinkActive="active">Impressum</li>
-  <li routerLink="links" routerLinkActive="active">Links</li>
-</ul>
+<nav>
+  <div routerLink="/" class="logo">
+    RöSeNa
+  </div>
+  <div class="separator">Veranstaltungen</div>
+  <ul>
+    <li routerLink="events" routerLinkActive="active">Events</li>
+    <li routerLink="calendar" routerLinkActive="active">Kalender</li>
+    <li routerLink="edit" routerLinkActive="active">Bearbeiten</li>
+  </ul>
+  <div class="separator">Über uns</div>
+  <ul>
+    <li routerLink="groups" routerLinkActive="active">Gruppen</li>
+    <li routerLink="archive" routerLinkActive="active">Archiv</li>
+    <li routerLink="images" routerLinkActive="active">Bilder</li>
+  </ul>
+  <div class="separator">Externes</div>
+  <ul>
+    <li routerLink="press" routerLinkActive="active">Presse</li>
+    <li routerLink="references" routerLinkActive="active">Impressum</li>
+    <li routerLink="links" routerLinkActive="active">Links</li>
+    <li routerLink="help" routerLinkActive="active">Hilfe</li>
+  </ul>
+  <div class="separator">Inhaber</div>
+  <p>
+    Faschingsgesellschaft <br />
+    Röhlinger Sechtanarren e.V. <br />
+    Max Mustermann <br />
+    Musterstraße 12 <br />
+    12345 Musterstadt <br />
+    E-Mail: info@mustermail.com
+  </p>
+</nav>
 <div class="burger" (click)="isVisible = !isVisible">
   <span class="line upper"></span>
   <span class="line middle"></span>
   <span class="line lower"></span>
 </div>
-<!-- </nav> -->

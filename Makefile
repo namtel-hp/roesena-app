@@ -2,7 +2,7 @@
 
 dev:
 	docker-compose down --remove-orphans
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+	docker-compose up --build
 
 prod:
 	docker-compose down --remove-orphans

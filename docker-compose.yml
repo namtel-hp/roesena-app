@@ -4,4 +4,4 @@ services:
     tty: true
     build:
       context: ./app/database
-      dockerfile: $PWD/app/docker/database.Dockerfile
+      dockerfile: $PWD/app/docker/database.Dockerfiles
