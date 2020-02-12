@@ -4,7 +4,7 @@
   <section
     *ngFor="let event of events | async"
     class="appEvent"
-    (click)="editEvent(event)"
+    [routerLink]="'/events/edit/' + event.id"
   >
     <h1>{{ event.title }}</h1>
     <h2>

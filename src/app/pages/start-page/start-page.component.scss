@@ -7,11 +7,10 @@
   height: 100%;
   justify-content: center;
   align-items: center;
-  background-color: var(--primary);
-  clip-path: polygon(0% 0%, 70% 0%, 100% 50%, 70% 100%, 0% 100%);
+  background-color: var(--background);
 
   header {
-    color: var(--on-primary);
+    color: var(--primary);
     padding: 1rem;
 
     h1,
@@ -34,7 +33,11 @@
   aside {
     max-width: 50%;
     margin-block-start: 2rem;
-    background-color: var(--secondary-dark);
+    color: var(--on-surface);
+    background-color: var(--surface);
+    box-shadow: 0 2px 5px 0px var(--on-background);
+    border-radius: 0.5rem;
+    padding: 1rem;
 
     h3,
     h4,
@@ -42,14 +45,6 @@
       padding: 0.5rem;
       margin: 0;
       z-index: -1;
-    }
-
-    h4 {
-      background-color: var(--secondary);
-    }
-
-    p {
-      background-color: var(--secondary-light);
     }
   }
 }

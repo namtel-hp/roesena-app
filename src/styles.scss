@@ -2,18 +2,12 @@ body {
   font-family: Roboto;
   box-sizing: border-box;
 
-  --primary: #4d69db;
+  --primary: #1a237e;
   --on-primary: #ffffff;
-  --primary-dark: #003fa9;
-  --on-primary-dark: #ffffff;
-  --primary-light: #8597ff;
-  --on-primary-light: #000000;
-  --secondary: #dbbe4d;
-  --on-secondary: #000000;
-  --secondary-light: #fff07d;
-  --on-secondary-light: #000000;
-  --secondary-dark: #a68e19;
-  --on-secondary-dark: #000000;
+  --background: #ffffff;
+  --on-background: #000000;
+  --surface: #ffffff;
+  --on-surface: #000000;
 }
 
 html,
@@ -27,4 +21,5 @@ body {
 
 * {
   box-sizing: inherit;
+  outline: none;
 }

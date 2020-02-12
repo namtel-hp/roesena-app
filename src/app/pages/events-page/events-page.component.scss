@@ -11,8 +11,8 @@
     margin: 0;
     padding: 1rem;
     font-size: 3rem;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
     position: sticky;
     top: 0;
   }
@@ -21,34 +21,43 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
     margin-top: 5rem;
     width: 70%;
 
     section.appEvent {
+      color: var(--on-surface);
+      background-color: var(--surface);
+      box-shadow: 0 2px 5px 0px var(--on-background);
+      border-radius: 0.5rem;
       margin: 1rem;
+      cursor: pointer;
 
       * {
-        margin: 0;
-        padding: 1rem;
+        margin: 1rem;
+      }
+
+      h1,
+      h2 {
+        text-align: center;
       }
 
       h1 {
-        background-color: var(--secondary-dark);
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
+        border-bottom: 1px solid transparent;
+        transition: border-color ease-out 0.2s;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        > h1 {
+          border-color: var(--primary);
+        }
       }
 
       h2 {
-        background-color: var(--secondary);
         font-size: 1.1rem;
-      }
-
-      p {
-        background-color: var(--secondary-light);
-        border-bottom-left-radius: 1rem;
-        border-bottom-right-radius: 1rem;
       }
     }
   }
@@ -65,15 +74,18 @@
     font-size: 4rem;
     outline: none;
     border: none;
-    background-color: var(--primary);
-    color: var(--on-primary);
     line-height: $size;
     cursor: pointer;
     transition: color ease-out 0.2s, background-color ease-out 0.2s;
 
-    &:active {
-      background-color: var(--primary-light);
-      color: var(--on-primary-light);
+    background-color: var(--surface);
+    box-shadow: 0 2px 5px 0px var(--on-background);
+    color: var(--primary);
+
+    &:active,
+    &:focus {
+      background-color: var(--primary);
+      color: var(--on-primary);
     }
   }
 }
