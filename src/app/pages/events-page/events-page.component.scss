@@ -56,11 +56,11 @@
   button {
     $size: 4rem;
     position: fixed;
-    left: calc(50% - ($size / 2));
+    left: calc(50% - #{($size / 2)});
     bottom: 3rem;
     width: $size;
     height: $size;
-    border-radius: $size / 2;
+    border-radius: #{$size / 2};
     outline: none;
     font-size: 4rem;
     outline: none;

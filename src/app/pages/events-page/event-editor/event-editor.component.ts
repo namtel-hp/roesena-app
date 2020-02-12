@@ -57,9 +57,8 @@ export class EventEditorComponent implements OnInit {
     private router: Router
   ) {
     if (this.route.snapshot.paramMap.get("id")) {
-      // this.firestore.collection<appEvent>("events").doc(this.route.snapshot.paramMap.get("id")).get()
       // save already existing event in here so it can be edited
-      // this should probably be done with a route resolver
+      this.editingEvent = route.snapshot.data.appEvent as appEvent;
     }
   }
 

@@ -22,7 +22,7 @@
     width: $size;
     border: none;
     outline: none;
-    border-radius: $size / 2;
+    border-radius: #{$size / 2};
     font-size: $size;
     line-height: $size;
     text-align: center;
