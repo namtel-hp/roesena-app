@@ -1,7 +1,0 @@
-version: '3.5'
-services:
-  database:
-    tty: true
-    build:
-      context: ./app/database
-      dockerfile: $PWD/app/docker/database.Dockerfile
