@@ -1,0 +1,43 @@
+<button routerLink="/events" class="close">+</button>
+
+<label for="ev-title"
+  >Titel <br /><input [(ngModel)]="editingEvent.title" type="text" id="ev-title"
+/></label>
+
+<label for="ev-description"
+  >Beschreibung <br /><input
+    [(ngModel)]="editingEvent.description"
+    type="text"
+    id="ev-description"
+/></label>
+
+<label for="ev-start"
+  >Beginn <br /><input
+    [(ngModel)]="startDateString"
+    type="datetime-local"
+    id="ev-start"
+/></label>
+
+<label for="ev-end"
+  >Ende <br /><input
+    [(ngModel)]="endDateString"
+    type="datetime-local"
+    id="ev-end"
+  />
+</label>
+
+<select
+  [(ngModel)]="editingEvent.authorityLevel"
+  name="Berechtigungslevel"
+  id="ev-auth"
+>
+  <option value="0">Gast</option>
+  <option value="1">Mitglied</option>
+  <option value="2">Gruppenleiter</option>
+  <option value="3">Präsidium</option>
+  <option value="4">Admin</option>
+</select>
+
+<button class="save" (click)="saveEvent()">Speichern</button>
+
+<button class="delete" (click)="deleteEvent()">Löschen</button>

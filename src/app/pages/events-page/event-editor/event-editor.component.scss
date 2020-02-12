@@ -1,0 +1,59 @@
+:host {
+  background-color: var(--primary-light);
+  position: fixed;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  border-radius: 1rem;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+
+  button.close {
+    background-color: var(--secondary);
+    color: var(--on-secondary);
+    $size: 2rem;
+    position: absolute;
+    top: $size;
+    right: $size;
+    height: $size;
+    width: $size;
+    border: none;
+    outline: none;
+    border-radius: $size / 2;
+    font-size: $size;
+    line-height: $size;
+    text-align: center;
+    cursor: pointer;
+    transform: rotate(45deg);
+    transition: color ease-out 0.2s, background-color ease-out 0.2s;
+
+    &:active {
+      background-color: var(--secondary-dark);
+      color: var(--on-secondary-dark);
+    }
+  }
+
+  button.save {
+    background-color: var(--secondary);
+    color: var(--on-secondary);
+    font-size: 1.5rem;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: color ease-out 0.2s, background-color ease-out 0.2s;
+
+    &:active {
+      background-color: var(--secondary-dark);
+      color: var(--on-secondary-dark);
+    }
+  }
+
+  label {
+    text-align: center;
+  }
+}
