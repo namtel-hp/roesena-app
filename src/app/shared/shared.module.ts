@@ -5,8 +5,9 @@ import { RouterModule } from "@angular/router";
 import { NavBarComponent } from "./components/nav-bar/nav-bar.component";
 
 import { ToLocalDateStringPipe } from "./pipes/to-local-date-string.pipe";
+import { EventCardComponent } from "./components/event-card/event-card.component";
 
-const components = [NavBarComponent];
+const components = [NavBarComponent, EventCardComponent];
 const pipes = [ToLocalDateStringPipe];
 
 @NgModule({

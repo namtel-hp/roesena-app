@@ -1,22 +1,11 @@
 <h1>RöSeNa Veranstaltungen und Termine</h1>
 
 <div class="eventWrapper">
-  <section
+  <app-event-card
     *ngFor="let event of events | async"
-    class="appEvent"
+    [event]="event"
     [routerLink]="'/events/edit/' + event.id"
-  >
-    <h1>{{ event.title }}</h1>
-    <h2>
-      <time [dateTime]="event.startDate">{{
-        event.startDate | toLocalDateString
-      }}</time
-      >-<time [dateTime]="event.endDate">{{
-        event.endDate | toLocalDateString
-      }}</time>
-    </h2>
-    <p>{{ event.description }}</p>
-  </section>
+  ></app-event-card>
 </div>
 
 <button routerLink="/events/edit">+</button>

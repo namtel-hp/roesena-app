@@ -4,13 +4,7 @@
   <h2>e.V. 1970</h2>
 </header>
 
-<aside>
-  <h3>Event Title</h3>
-  <h4>13.12.2019 - 02.04.2020</h4>
-  <p>
-    This will then be the event description This will then be the event
-    description This will then be the event description This will then be the
-    event description This will then be the event description This will then be
-    the event description
-  </p>
-</aside>
+<app-event-card
+  *ngIf="eventForCard | async as ev"
+  [event]="ev"
+></app-event-card>

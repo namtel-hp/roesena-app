@@ -1,0 +1,10 @@
+<h1>{{ event.title }}</h1>
+<h2>
+  <time [dateTime]="event.startDate">{{
+    event.startDate | toLocalDateString
+  }}</time
+  >-<time [dateTime]="event.endDate">{{
+    event.endDate | toLocalDateString
+  }}</time>
+</h2>
+<p>{{ event.description }}</p>
