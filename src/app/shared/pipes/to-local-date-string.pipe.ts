@@ -5,6 +5,9 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class ToLocalDateStringPipe implements PipeTransform {
   transform(value: Date): string {
-    return `${value.getDate()}.${value.getMonth()}.${value.getFullYear()}`;
+    return `${value
+      .getDate()
+      .toString()
+      .padStart(2, "0")}.${(value.getMonth() + 1).toString().padStart(2, "0")}.${value.getFullYear()}`;
   }
 }

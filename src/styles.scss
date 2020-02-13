@@ -8,6 +8,34 @@ body {
   --on-background: #000000;
   --surface: #ffffff;
   --on-surface: #000000;
+  // temporary error color
+  --error: #ad150d;
+  --on-error: #ffffff;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background-color: var(--surface);
+  box-shadow: 0 2px 5px 0px var(--on-background);
+  color: var(--primary);
+  border-radius: 0.5rem;
+  transition: color ease-out 0.2s, background-color ease-out 0.2s;
+
+  &:active,
+  &:focus {
+    background-color: var(--primary);
+    color: var(--on-primary);
+  }
+
+  &.delete {
+    color: var(--error);
+    &:active,
+    &:focus {
+      background-color: var(--error);
+      color: var(--on-error);
+    }
+  }
 }
 
 html,
