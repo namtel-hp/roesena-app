@@ -1,59 +1,71 @@
 <button routerLink="/events" class="close">+</button>
 
-<input id="title" type="text" placeholder="Titel" [(ngModel)]="editingEvent.title" required />
-<textarea id="description" placeholder="Beschreibung" rows="5" [(ngModel)]="editingEvent.description"></textarea>
-<div class="timeWrapper">
-  <div class="timeElement">
-    <span>Beginn</span>
-    <input
-      #startDate
-      [value]="editingEvent.startDate | toLocalDateString"
-      type="text"
-      pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.[0-9]{4}$"
-      placeholder="dd.mm.yyyy"
-      required
-    />
-    <input
-      #startTime
-      [value]="editingEvent.startDate | toLocalTimeString"
-      type="text"
-      pattern="^([01][1-9]|2[0-4]):([0-5][0-9])$"
-      placeholder="hh:mm"
-      required
-    />
+<form (ngSubmit)="saveEvent()" #eventForm="ngForm">
+  <input id="title" type="text" placeholder="Titel" name="title" [(ngModel)]="editingEvent.title" required />
+  <textarea
+    id="description"
+    placeholder="Beschreibung"
+    rows="5"
+    name="description"
+    [(ngModel)]="editingEvent.description"
+  ></textarea>
+  <div class="timeWrapper">
+    <div class="timeElement">
+      <span>Beginn</span>
+      <input
+        #startDateTemplate
+        [(ngModel)]="startDate"
+        name="startDate"
+        type="text"
+        pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.[0-9]{4}$"
+        placeholder="dd.mm.yyyy"
+        required
+      />
+      <input
+        #startTimeTemplate
+        [(ngModel)]="startTime"
+        name="startTime"
+        type="text"
+        pattern="^([01][1-9]|2[0-4]):([0-5][0-9])$"
+        placeholder="hh:mm"
+        required
+      />
+    </div>
+    <div class="timeElement">
+      <span>Ende</span>
+      <input
+        #endDateTemplate
+        [(ngModel)]="endDate"
+        name="endDate"
+        pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.[0-9]{4}$"
+        placeholder="dd.mm.yyyy"
+        required
+      />
+      <input
+        #endTimeTemplate
+        [(ngModel)]="endTime"
+        name="endTime"
+        type="text"
+        pattern="^([01][1-9]|2[0-4]):([0-5][0-9])$"
+        placeholder="hh:mm"
+        required
+      />
+    </div>
   </div>
-  <div class="timeElement">
-    <span>Ende</span>
-    <input
-      #endDate
-      [value]="editingEvent.endDate | toLocalDateString"
-      pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.[0-9]{4}$"
-      placeholder="dd.mm.yyyy"
-      required
-    />
-    <input
-      #endTime
-      [value]="editingEvent.endDate | toLocalTimeString"
-      type="text"
-      pattern="^([01][1-9]|2[0-4]):([0-5][0-9])$"
-      placeholder="hh:mm"
-      required
-    />
+
+  <div class="selectWrapper">
+    <span>Sichtbar für</span>
+    <select [(ngModel)]="editingEvent.authorityLevel" name="authorityLevel" required>
+      <option value="0">Gäste</option>
+      <option value="1">Mitglieder</option>
+      <option value="2">Gruppenleiter</option>
+      <option value="3">Präsidium</option>
+      <option value="4">Admins</option>
+    </select>
   </div>
-</div>
 
-<div class="selectWrapper">
-  <span>Sichtbar für</span>
-  <select [(ngModel)]="editingEvent.authorityLevel" required>
-    <option value="0">Gäste</option>
-    <option value="1">Mitglieder</option>
-    <option value="2">Gruppenleiter</option>
-    <option value="3">Präsidium</option>
-    <option value="4">Admins</option>
-  </select>
-</div>
-
-<div class="buttonWrapper">
-  <button (click)="saveEvent(startDate.value, startTime.value, endDate.value, endTime.value)">Speichern</button>
-  <button *ngIf="route.snapshot.paramMap.get('id')" class="delete" (click)="deleteEvent()">Löschen</button>
-</div>
+  <div class="buttonWrapper">
+    <button type="submit" [disabled]="!eventForm.form.valid">Speichern</button>
+    <button type="button" [disabled]="!route.snapshot.paramMap.get('id')" class="delete" (click)="deleteEvent()">Löschen</button>
+  </div>
+</form>

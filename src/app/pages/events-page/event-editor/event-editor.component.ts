@@ -11,13 +11,13 @@ import { appEvent } from "src/app/interfaces";
   styleUrls: ["./event-editor.component.scss"]
 })
 export class EventEditorComponent {
-  @ViewChild("startDate")
+  @ViewChild("startDateTemplate")
   private startDateRef: ElementRef;
-  @ViewChild("startTime")
-  private startTimeRef: ElementRef;
-  @ViewChild("endDate")
+  @ViewChild("endDateTemplate")
   private endDateRef: ElementRef;
-  @ViewChild("endTime")
+  @ViewChild("startTimeTemplate")
+  private startTimeRef: ElementRef;
+  @ViewChild("endTimeTemplate")
   private endTimeRef: ElementRef;
 
   public editingEvent: appEvent = {
@@ -37,12 +37,77 @@ export class EventEditorComponent {
     }
   }
 
-  public saveEvent(startDate: string, startTime: string, endDate: string, endTime: string): void {
-    // console.log(el);
-    // this.editingEvent.startDate.setDate(this.startDateRef.nativeElement.value.slice(0, 2));
-    // this.editingEvent.startDate.setMonth(this.startDateRef.nativeElement.value.slice(3, 5));
-    // this.editingEvent.startDate.setFullYear(this.startDateRef.nativeElement.value.slice(6, 10));
-    console.log(this.editingEvent);
+  public get startDate(): string {
+    return `${this.editingEvent.startDate
+      .getDate()
+      .toString()
+      .padStart(2, "0")}.${(this.editingEvent.startDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}.${this.editingEvent.startDate.getFullYear()}`;
+  }
+
+  public set startDate(val: string) {
+    if (this.startDateRef.nativeElement.checkValidity()) {
+      const parts: number[] = val.split(".").map(el => parseInt(el));
+      this.editingEvent.startDate.setDate(parts[0]);
+      this.editingEvent.startDate.setMonth(parts[1] - 1);
+      this.editingEvent.startDate.setFullYear(parts[2]);
+    }
+  }
+
+  public get endDate(): string {
+    return `${this.editingEvent.endDate
+      .getDate()
+      .toString()
+      .padStart(2, "0")}.${(this.editingEvent.endDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}.${this.editingEvent.endDate.getFullYear()}`;
+  }
+
+  public set endDate(val: string) {
+    if (this.endDateRef.nativeElement.checkValidity()) {
+      const parts: number[] = val.split(".").map(el => parseInt(el));
+      this.editingEvent.endDate.setDate(parts[0]);
+      this.editingEvent.endDate.setMonth(parts[1] - 1);
+      this.editingEvent.endDate.setFullYear(parts[2]);
+    }
+  }
+
+  public get startTime(): string {
+    return `${this.editingEvent.startDate
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${this.editingEvent.startDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+  }
+
+  public get endTime(): string {
+    return `${this.editingEvent.endDate
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${this.editingEvent.endDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+  }
+
+  public set startTime(val: string) {
+    if (this.startTimeRef.nativeElement.checkValidity()) {
+      const parts: number[] = val.split(":").map(el => parseInt(el));
+      this.editingEvent.startDate.setHours(parts[0], parts[1]);
+    }
+  }
+
+  public set endTime(val: string) {
+    if (this.endTimeRef.nativeElement.checkValidity()) {
+      const parts: number[] = val.split(":").map(el => parseInt(el));
+      this.editingEvent.endDate.setHours(parts[0], parts[1]);
+    }
+  }
+
+  public saveEvent(): void {
     if (this.route.snapshot.paramMap.get("id")) {
       // update existing event here
       this.firestore
