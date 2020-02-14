@@ -1,0 +1,35 @@
+:host {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr 0.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  row-gap: 0.5rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 0.5rem;
+  grid-template-areas:
+    ". . header header header . ."
+    "mon tue wed thu fri sat sun"
+    ". . . . . . ."
+    ". . . . . . ."
+    ". . . . . . ."
+    ". . . . . . ."
+    ". . . . . . ."
+    ". . . . . . .";
+
+  h1 {
+    grid-area: header;
+  }
+
+  .dayCard {
+    color: var(--on-surface);
+    background-color: var(--surface);
+    box-shadow: 0 2px 5px 0px var(--on-background);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+
+    h3 {
+      margin: 0;
+      color: var(--primary);
+    }
+  }
+}

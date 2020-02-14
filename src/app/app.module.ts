@@ -13,6 +13,7 @@ import { StartPageComponent } from "./pages/start-page/start-page.component";
 import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
 import { EventsPageComponent } from "./pages/events-page/events-page.component";
 import { EventEditorComponent } from './pages/events-page/event-editor/event-editor.component';
+import { CalendarPageComponent } from './pages/calendar-page/calendar-page.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { EventEditorComponent } from './pages/events-page/event-editor/event-edi
     StartPageComponent,
     NotFoundPageComponent,
     EventsPageComponent,
-    EventEditorComponent
+    EventEditorComponent,
+    CalendarPageComponent
   ],
   imports: [
     BrowserModule,
