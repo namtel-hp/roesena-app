@@ -1,13 +1,16 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { appEvent } from "src/app/interfaces";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-calendar-page",
   templateUrl: "./calendar-page.component.html",
   styleUrls: ["./calendar-page.component.scss"]
 })
-export class CalendarPageComponent implements OnInit {
+export class CalendarPageComponent implements OnDestroy {
+  private subs: Subscription[] = [];
+  private id: string;
   public weekdayStrings = [
     { area: "mon", text: "Mo" },
     { area: "tue", text: "Di" },
@@ -19,7 +22,7 @@ export class CalendarPageComponent implements OnInit {
   ];
   public dayTemplate: dayTemplateElement[] = [];
   private get date(): Date {
-    return this.route.snapshot.paramMap.get("id") ? new Date(this.route.snapshot.paramMap.get("id")) : new Date();
+    return this.id ? new Date(this.id) : new Date();
   }
   public get year(): number {
     return this.date.getFullYear();
@@ -28,35 +31,56 @@ export class CalendarPageComponent implements OnInit {
     return this.date.getMonth();
   }
   public get headerString(): string {
-    let d = this.route.snapshot.paramMap.get("id") ? new Date(this.route.snapshot.paramMap.get("id")) : new Date();
+    let d = this.id ? new Date(this.id) : new Date();
     return getMonthName(d) + " " + d.getFullYear();
   }
   public get mondayFirstOffset(): number {
     return new Date(this.year, this.month, 1).getDay() ? new Date(this.year, this.month, 1).getDay() - 1 : 6;
   }
+  public get nextMonthString(): string {
+    if (this.month < 11) {
+      return new Date(this.year, this.month + 1, 1).toISOString();
+    } else {
+      return new Date(this.year + 1, 0, 1).toISOString();
+    }
+  }
+  public get previousMonthString(): string {
+    if (this.month > 0) {
+      return new Date(this.year, this.month - 1, 1).toISOString();
+    } else {
+      return new Date(this.year - 1, 11, 1).toISOString();
+    }
+  }
 
   constructor(private route: ActivatedRoute) {
-    console.log(route.snapshot.data);
-    const dayAmount = new Date(this.year, this.month + 1, 0).getDate();
-    const offset = this.mondayFirstOffset;
-    this.dayTemplate = new Array(dayAmount).fill(undefined).map(
-      (_, index): dayTemplateElement => {
-        const column = new Date(this.year, this.month, index).getDay() + 1;
-        const row = Math.floor((offset + index) / 7) + 3;
-        return {
-          date: index + 1,
-          events: this.route.snapshot.data.calendarEvents.filter(
-            (event: appEvent) =>
-              new Date(event.startDate).getTime() <= new Date(this.year, this.month, index + 1).getTime() &&
-              new Date(event.endDate).getTime() >= new Date(this.year, this.month, index + 1).getTime()
-          ),
-          gridArea: `${row} / ${column} / ${row} / ${column}`
-        };
-      }
+    this.subs.push(this.route.paramMap.subscribe(pMap => (this.id = pMap.get("id"))));
+    this.subs.push(
+      this.route.data.subscribe(data => {
+        console.log(data);
+        const dayAmount = new Date(this.year, this.month + 1, 0).getDate();
+        const offset = this.mondayFirstOffset;
+        this.dayTemplate = new Array(dayAmount).fill(undefined).map(
+          (_, index): dayTemplateElement => {
+            const column = new Date(this.year, this.month, index).getDay() + 1;
+            const row = Math.floor((offset + index) / 7) + 3;
+            return {
+              date: index + 1,
+              events: data.calendarEvents.filter(
+                (event: appEvent) =>
+                  new Date(event.startDate).getTime() <= new Date(this.year, this.month, index + 1, 23, 59).getTime() &&
+                  new Date(event.endDate).getTime() >= new Date(this.year, this.month, index + 1, 0, 0).getTime()
+              ),
+              gridArea: `${row} / ${column} / ${row} / ${column}`
+            };
+          }
+        );
+      })
     );
   }
 
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe());
+  }
 }
 
 interface dayTemplateElement {

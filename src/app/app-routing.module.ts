@@ -27,11 +27,13 @@ const routes: Routes = [
   {
     path: "calendar",
     component: CalendarPageComponent,
+    runGuardsAndResolvers: "always",
     resolve: { calendarEvents: CalendarEventsResolver }
   },
   {
     path: "calendar/:id",
     component: CalendarPageComponent,
+    runGuardsAndResolvers: "always",
     resolve: { calendarEvents: CalendarEventsResolver }
   },
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" }
