@@ -1,4 +1,4 @@
-<button routerLink="/events" class="close">+</button>
+<button routerLink="/events" class="close delete"><i class="material-icons">close</i></button>
 
 <form (ngSubmit)="saveEvent()" #eventForm="ngForm">
   <input id="title" type="text" placeholder="Titel" name="title" [(ngModel)]="editingEvent.title" required />
@@ -55,7 +55,7 @@
 
   <div class="selectWrapper">
     <span>Sichtbar für</span>
-    <select [(ngModel)]="editingEvent.authorityLevel" name="authorityLevel" required>
+    <select [(ngModel)]="authorityLevel" name="authorityLevel" required>
       <option value="0">Gäste</option>
       <option value="1">Mitglieder</option>
       <option value="2">Gruppenleiter</option>
@@ -65,7 +65,9 @@
   </div>
 
   <div class="buttonWrapper">
-    <button type="submit" [disabled]="!eventForm.form.valid">Speichern</button>
-    <button type="button" [disabled]="!route.snapshot.paramMap.get('id')" class="delete" (click)="deleteEvent()">Löschen</button>
+    <button type="submit" [disabled]="!eventForm.form.valid">Speichern<i class="material-icons">save</i></button>
+    <button type="button" [disabled]="!route.snapshot.paramMap.get('id')" class="delete" (click)="deleteEvent()">
+      Löschen<i class="material-icons">delete</i>
+    </button>
   </div>
 </form>

@@ -5,7 +5,8 @@
   box-shadow: 0 2px 5px 0px var(--on-background);
   border-radius: 0.5rem;
   margin: 1rem;
-  cursor: pointer;
+  position: relative;
+  padding-bottom: 1.2rem;
 
   * {
     margin: 1rem;
@@ -21,15 +22,30 @@
     transition: border-color ease-out 0.2s;
   }
 
-  &:hover,
-  &:focus,
-  &:active {
-    > h1 {
-      border-color: var(--primary);
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  i {
+    position: absolute;
+    margin: 0;
+    cursor: pointer;
+    transition: color ease-out 0.2s;
+
+    &:focus,
+    &:active,
+    &:hover {
+      color: var(--primary);
     }
   }
 
-  h2 {
-    font-size: 1.1rem;
+  i.edit {
+    top: 0.2rem;
+    right: 0.2rem;
+  }
+
+  i.details {
+    bottom: 0.2rem;
+    left: calc(50% - 0.5rem);
   }
 }

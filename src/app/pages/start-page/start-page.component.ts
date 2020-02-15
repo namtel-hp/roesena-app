@@ -27,6 +27,7 @@ export class StartPageComponent {
         filter(res => res.docs.length > 0),
         map(res => {
           let data = res.docs[0].data();
+          data.id = res.docs[0].id;
           data.startDate = data.startDate.toDate();
           data.endDate = data.endDate.toDate();
           return data as appEvent;

@@ -107,7 +107,17 @@ export class EventEditorComponent {
     }
   }
 
+  public get authorityLevel(): string {
+    return this.editingEvent.authorityLevel.toString();
+  }
+
+  public set authorityLevel(val: string) {
+    this.editingEvent.authorityLevel = parseInt(val);
+  }
+
   public saveEvent(): void {
+    // delete id to not safe it as extra field in the firestore document
+    delete this.editingEvent.id;
     if (this.route.snapshot.paramMap.get("id")) {
       // update existing event here
       this.firestore

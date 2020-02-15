@@ -35,22 +35,13 @@
     width: $size;
     height: $size;
     border-radius: #{$size / 2};
-    outline: none;
-    font-size: 4rem;
-    outline: none;
-    border: none;
-    line-height: $size;
-    cursor: pointer;
-    transition: color ease-out 0.2s, background-color ease-out 0.2s;
 
-    background-color: var(--surface);
-    box-shadow: 0 2px 5px 0px var(--on-background);
-    color: var(--primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    &:active,
-    &:focus {
-      background-color: var(--primary);
-      color: var(--on-primary);
+    i {
+      font-size: $size;
     }
   }
 }

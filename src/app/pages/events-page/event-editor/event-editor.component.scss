@@ -77,15 +77,20 @@
     height: $size;
     width: $size;
     border-radius: #{$size / 2};
-    font-size: $size;
-    line-height: $size;
-    text-align: center;
-    transform: rotate(45deg);
-    color: var(--error);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    i {
+      font-size: $size;
+    }
   }
 
   button:not(.close) {
     padding: 0.5rem;
     font-weight: bold;
+    font-size: 1;
+    display: flex;
+    align-items: center;
   }
 }
