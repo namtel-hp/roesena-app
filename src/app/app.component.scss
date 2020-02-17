@@ -24,4 +24,28 @@
     width: 100%;
     min-height: 100%;
   }
+
+  .loginStatus {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    cursor: pointer;
+
+    & > * {
+      font-weight: bold;
+    }
+
+    span {
+      padding: 1rem;
+      display: block;
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border-radius: 2rem;
+      height: 4rem;
+      width: 4rem;
+      line-height: 2rem;
+      text-align: center;
+    }
+  }
 }

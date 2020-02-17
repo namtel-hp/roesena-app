@@ -4,6 +4,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import "firebase/firestore";
 
 import { appEvent } from "src/app/interfaces";
+import { AngularFireAuth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-event-editor",
@@ -23,14 +24,20 @@ export class EventEditorComponent {
   public editingEvent: appEvent = {
     title: "",
     id: "",
-    authorityLevel: 0,
     description: "",
     startDate: new Date(),
     endDate: new Date(),
-    participants: []
+    roles: {}
   };
 
-  constructor(private firestore: AngularFirestore, public route: ActivatedRoute, private router: Router) {
+  constructor(
+    private firestore: AngularFirestore,
+    public route: ActivatedRoute,
+    private router: Router,
+    private auth: AngularFireAuth
+  ) {
+    this.auth.currentUser.then(user => (this.editingEvent.roles[user.uid] = "owner"));
+    // this.editingEvent.roles[auth.]
     if (this.route.snapshot.paramMap.get("id")) {
       // save already existing event in here so it can be edited
       this.editingEvent = route.snapshot.data.appEvent as appEvent;
@@ -105,14 +112,6 @@ export class EventEditorComponent {
       const parts: number[] = val.split(":").map(el => parseInt(el));
       this.editingEvent.endDate.setHours(parts[0], parts[1]);
     }
-  }
-
-  public get authorityLevel(): string {
-    return this.editingEvent.authorityLevel.toString();
-  }
-
-  public set authorityLevel(val: string) {
-    this.editingEvent.authorityLevel = parseInt(val);
   }
 
   public saveEvent(): void {

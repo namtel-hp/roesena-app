@@ -4,6 +4,5 @@ export interface appEvent {
   description: string;
   startDate: Date;
   endDate: Date;
-  participants: { id: string; amount: number }[];
-  authorityLevel: number;
+  roles: any;
 }

@@ -1,0 +1,25 @@
+<div *ngIf="auth.$user | async as user; else loginForm">
+  <span>Logged in as: {{ user.name }}</span>
+  <button (click)="auth.logout()">Logout</button>
+</div>
+
+<ng-template #loginForm>
+  <ng-container *ngIf="(route.pathFromRoot[2].url | async)[0].path === 'login'; else registerForm">
+    <form (ngSubmit)="auth.login(userInput.email, userInput.password)" #loginFormElement="ngForm">
+      <input type="text" placeholder="E-Mail" name="email" [(ngModel)]="userInput.email" required />
+      <input type="password" name="password" [(ngModel)]="userInput.password" required />
+      <button routerLink="/auth/register">Registrieren</button>
+      <button type="submit" [disabled]="loginFormElement.form.invalid">Login</button>
+    </form>
+  </ng-container>
+
+  <ng-template #registerForm>
+    <form (ngSubmit)="auth.register(userInput.email, userInput.password, userInput.name)" #registerFormElement="ngForm">
+      <input type="text" placeholder="Anzeigename" name="name" [(ngModel)]="userInput.name" required />
+      <input type="text" placeholder="E-Mail" name="email" [(ngModel)]="userInput.email" required />
+      <input type="password" name="password" [(ngModel)]="userInput.password" required />
+      <button routerLink="/auth/login">Anmelden</button>
+      <button type="submit" [disabled]="registerFormElement.form.invalid">Registrieren</button>
+    </form>
+  </ng-template>
+</ng-template>

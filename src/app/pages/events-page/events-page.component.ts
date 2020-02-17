@@ -1,11 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, combineLatest, of } from "rxjs";
+import { map, switchMap, tap } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
 import "firebase/firestore";
 
 import { appEvent } from "src/app/interfaces";
 import { Router } from "@angular/router";
+import { AngularFireAuth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-events-page",
@@ -15,11 +16,21 @@ import { Router } from "@angular/router";
 export class EventsPageComponent implements OnInit {
   public events: Observable<appEvent[]>;
 
-  constructor(firestore: AngularFirestore, private router: Router) {
-    this.events = firestore
-      .collection<appEvent>("events")
-      .snapshotChanges()
-      .pipe(
+  constructor(firestore: AngularFirestore, private router: Router, auth: AngularFireAuth) {
+    auth.currentUser.then(user => {
+      this.events = combineLatest(
+        firestore
+          .collection<appEvent>("events", qFn => qFn.where(`roles.${user.uid}`, "in", ["reader", "writer", "owner"]))
+          .snapshotChanges(),
+        firestore
+          .collection<appEvent>("events", qFn => qFn.where(`roles.isPublic`, "==", true))
+          .snapshotChanges()
+      ).pipe(
+        // combine the arrays
+        map(events => {
+          let [publicEvents, myEvents] = events;
+          return [...publicEvents, ...myEvents];
+        }),
         // map the time string to a js date and the id
         map(changeActions => {
           return changeActions.map(action => {
@@ -29,8 +40,13 @@ export class EventsPageComponent implements OnInit {
             data.endDate = new Date(data.endDate.toDate());
             return data;
           });
+        }),
+        // remove duplicates
+        map(events => {
+          return events.filter((item: appEvent, index) => events.findIndex(el => el.id === item.id) === index);
         })
       );
+    });
   }
 
   ngOnInit(): void {}

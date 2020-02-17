@@ -9,6 +9,7 @@ import { EventEditorComponent } from "./pages/events-page/event-editor/event-edi
 import { EventResolver } from "./resolvers/event.resolver";
 import { CalendarPageComponent } from "./pages/calendar-page/calendar-page.component";
 import { CalendarEventsResolver } from "./resolvers/calendar-events.resolver";
+import { AuthPageComponent } from "./pages/auth-page/auth-page.component";
 
 const routes: Routes = [
   { path: "", component: StartPageComponent },
@@ -27,14 +28,31 @@ const routes: Routes = [
   {
     path: "calendar",
     component: CalendarPageComponent,
-    runGuardsAndResolvers: "always",
     resolve: { calendarEvents: CalendarEventsResolver }
   },
   {
     path: "calendar/:id",
     component: CalendarPageComponent,
-    runGuardsAndResolvers: "always",
+    runGuardsAndResolvers: "pathParamsChange",
     resolve: { calendarEvents: CalendarEventsResolver }
+  },
+  {
+    path: "auth",
+    children: [
+      {
+        path: "",
+        redirectTo: "login",
+        pathMatch: "full"
+      },
+      {
+        path: "register",
+        component: AuthPageComponent
+      },
+      {
+        path: "login",
+        component: AuthPageComponent
+      }
+    ]
   },
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" }
 ];

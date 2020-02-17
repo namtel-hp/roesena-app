@@ -18,8 +18,11 @@ export class StartPageComponent {
     this.eventForCard = firestore
       .collection("events", ref =>
         ref
-          .where("endDate", ">", new Date())
-          .orderBy("endDate")
+          .where("roles.isPublic", "==", true)
+          // .where("authorityLevel", "<=", 2)
+          // .orderBy("endDate")
+
+          // implement auth level with role collection to be able to query stuff
           .limit(1)
       )
       .get()

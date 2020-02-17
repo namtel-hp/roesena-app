@@ -57,6 +57,7 @@
       transition: 0.2s ease-out border-color;
       width: min-content;
       cursor: pointer;
+      display: flex;
 
       &:hover,
       &:focus,
