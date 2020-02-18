@@ -51,16 +51,19 @@ export class NextEventResolver implements Resolve<appEvent> {
     //   })
     // );
     // } else {
-    eventObs = this.firestore
-      .collection<appEvent>("events", qFn =>
-        qFn
-          .where(`roles.isPublic`, "==", true)
-          .where("endDate", ">=", new Date())
-          .orderBy("endDate")
-          .limit(1)
-      )
+    return this.firestore
+      .collection<appEvent>("events", qFn => qFn.where(`authLevel`, "<=", 2))
       .get()
-      .pipe(map(eventConverter));
+      .pipe(
+        // map documents to events
+        map(eventConverter),
+        // sort the events
+        map(el => el.sort((a, b) => b.endDate.getTime() - a.endDate.getTime())),
+        // filter out all the ones that are already over
+        map(el => el.filter(val => new Date().getTime() - val.endDate.getTime() > 0)),
+        // take the first one of the sorted ones
+        map(el => el[0])
+      );
     // }
     return eventObs.pipe(map(el => el[0]));
   }

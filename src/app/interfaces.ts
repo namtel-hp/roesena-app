@@ -4,5 +4,5 @@ export interface appEvent {
   description: string;
   startDate: Date;
   endDate: Date;
-  roles: any;
+  authLevel: number;
 }

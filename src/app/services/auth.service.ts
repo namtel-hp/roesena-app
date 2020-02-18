@@ -7,7 +7,7 @@ import { BehaviorSubject, Subscription } from "rxjs";
   providedIn: "root"
 })
 export class AuthService implements OnDestroy {
-  public $user = new BehaviorSubject<{ id: string; name: string }>(null);
+  public $user = new BehaviorSubject<{ id: string; name: string; authLevel: number }>(null);
   private subs: Subscription[] = [];
 
   constructor(public auth: AngularFireAuth, private firestore: AngularFirestore) {
@@ -23,7 +23,7 @@ export class AuthService implements OnDestroy {
               .get()
               .subscribe(docRef => {
                 // update the BehaviourSubject with the user
-                this.$user.next({ name: docRef.data().name, id: user.uid });
+                this.$user.next({ name: docRef.data().name, id: user.uid, authLevel: docRef.data().authLevel });
               })
           );
         } else {

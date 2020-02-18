@@ -7,10 +7,7 @@
 
 <i
   class="material-icons edit"
-  *ngIf="
-    (auth.$user | async) &&
-    (event.roles[(auth.$user | async).id] === 'owner' || event.roles[(auth.$user | async).id] === 'writer')
-  "
+  *ngIf="(auth.$user | async) && event.authLevel <= (auth.$user | async).authLevel"
   [routerLink]="'/events/edit/' + event.id"
   >edit</i
 >

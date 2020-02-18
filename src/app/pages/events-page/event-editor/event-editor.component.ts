@@ -27,7 +27,7 @@ export class EventEditorComponent {
     description: "",
     startDate: new Date(),
     endDate: new Date(),
-    roles: {}
+    authLevel: 0
   };
 
   constructor(
@@ -36,7 +36,7 @@ export class EventEditorComponent {
     private router: Router,
     private auth: AngularFireAuth
   ) {
-    this.auth.currentUser.then(user => (this.editingEvent.roles[user.uid] = "owner"));
+    // this.auth.currentUser.then(user => (this.editingEvent.roles[user.uid] = "owner"));
     // this.editingEvent.roles[auth.]
     if (this.route.snapshot.paramMap.get("id")) {
       // save already existing event in here so it can be edited
