@@ -14,6 +14,12 @@ body {
 }
 
 button {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
   border: none;
   background-color: var(--surface);
@@ -39,6 +45,30 @@ button {
       background-color: var(--error);
       color: var(--on-error);
     }
+  }
+}
+
+h1 {
+  background-color: var(--primary);
+  color: var(--on-primary);
+  margin: 0;
+  padding: 1rem;
+  font-size: 3rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  position: sticky;
+  top: 0;
+}
+
+input {
+  border: none;
+  border-bottom: 1px solid var(--primary);
+  &#title {
+    font-size: 2rem;
+  }
+
+  &:invalid {
+    border-color: var(--error);
   }
 }
 

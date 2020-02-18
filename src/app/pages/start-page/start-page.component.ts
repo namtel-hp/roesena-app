@@ -5,6 +5,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import "firebase/firestore";
 
 import { appEvent } from "src/app/interfaces";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-start-page",
@@ -14,27 +15,7 @@ import { appEvent } from "src/app/interfaces";
 export class StartPageComponent {
   public eventForCard: Observable<appEvent>;
 
-  constructor(firestore: AngularFirestore) {
-    this.eventForCard = firestore
-      .collection("events", ref =>
-        ref
-          .where("roles.isPublic", "==", true)
-          // .where("authorityLevel", "<=", 2)
-          // .orderBy("endDate")
-
-          // implement auth level with role collection to be able to query stuff
-          .limit(1)
-      )
-      .get()
-      .pipe(
-        filter(res => res.docs.length > 0),
-        map(res => {
-          let data = res.docs[0].data();
-          data.id = res.docs[0].id;
-          data.startDate = data.startDate.toDate();
-          data.endDate = data.endDate.toDate();
-          return data as appEvent;
-        })
-      );
+  constructor(route: ActivatedRoute) {
+    this.eventForCard = route.snapshot.data.appEvent;
   }
 }

@@ -1,32 +1,26 @@
 import { Injectable } from "@angular/core";
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Observable, combineLatest } from "rxjs";
-import { map } from "rxjs/operators";
-import { AngularFirestore } from "@angular/fire/firestore";
-import "firebase/firestore";
-
 import { appEvent } from "../interfaces";
-import { AuthService } from "../services/auth.service";
+import { AngularFirestore, QueryFn, Query } from "@angular/fire/firestore";
+import { AuthService } from "./auth.service";
+import { map } from "rxjs/operators";
 
-@Injectable({ providedIn: "root" })
-export class CalendarEventsResolver implements Resolve<appEvent> {
+@Injectable({
+  providedIn: "root"
+})
+export class EventService {
   constructor(private firestore: AngularFirestore, private auth: AuthService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
+  public getEventsByQuery(query: Query): Observable<appEvent[]> {
     const uid = this.auth.$user.getValue() ? this.auth.$user.getValue().id : undefined;
-    const firstDay = route.paramMap.get("id")
-      ? new Date(new Date(route.paramMap.get("id")).getFullYear(), new Date(route.paramMap.get("id")).getMonth(), 1)
-      : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    // const firstDay = route.paramMap.get("id")
+    //   ? new Date(new Date(route.paramMap.get("id")).getFullYear(), new Date(route.paramMap.get("id")).getMonth(), 1)
+    //   : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     if (uid) {
       // if the user is logged in the weird firestore or query has to be done
       return combineLatest(
         this.firestore
-          .collection<appEvent>("events", qFn =>
-            qFn
-              .where(`roles.${uid}`, "in", ["reader", "writer", "owner"])
-              // get items where end date is after the first of the month
-              .where("endDate", ">=", firstDay)
-          )
+          .collection<appEvent>("events", _qFn => query.where(`roles.${uid}`, "in", ["reader", "writer", "owner"]))
           .get()
           .pipe(
             map(querySnapshot => {

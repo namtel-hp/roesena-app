@@ -10,9 +10,10 @@ import { EventResolver } from "./resolvers/event.resolver";
 import { CalendarPageComponent } from "./pages/calendar-page/calendar-page.component";
 import { CalendarEventsResolver } from "./resolvers/calendar-events.resolver";
 import { AuthPageComponent } from "./pages/auth-page/auth-page.component";
+import { NextEventResolver } from "./resolvers/next-event.resolver";
 
 const routes: Routes = [
-  { path: "", component: StartPageComponent },
+  { path: "", component: StartPageComponent, resolve: { appEvent: NextEventResolver } },
   {
     path: "events",
     component: EventsPageComponent,

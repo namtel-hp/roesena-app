@@ -1,8 +1,8 @@
-<h1>{{ event.title }}</h1>
-<h2>
+<h3>{{ event.title }}</h3>
+<h4>
   <time [dateTime]="event.startDate">{{ event.startDate | toLocalDateString }}</time
   >-<time [dateTime]="event.endDate">{{ event.endDate | toLocalDateString }}</time>
-</h2>
+</h4>
 <p>{{ event.description }}</p>
 
 <i
