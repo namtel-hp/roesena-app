@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject, Subscription, Observable, from } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
@@ -29,12 +30,13 @@ export class AuthService implements OnDestroy {
         } else {
           this.$user.next(null);
         }
+        console.log(this.$user.getValue());
       })
     );
   }
 
-  public login(username: string, password: string): void {
-    this.auth.signInWithEmailAndPassword(username, password);
+  public login(username: string, password: string): Observable<null> {
+    return from(this.auth.signInWithEmailAndPassword(username, password)).pipe(map(_ => null));
   }
 
   public logout(): void {

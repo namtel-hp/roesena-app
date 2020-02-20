@@ -11,47 +11,58 @@ import { CalendarPageComponent } from "./pages/calendar-page/calendar-page.compo
 import { CalendarEventsResolver } from "./resolvers/calendar-events.resolver";
 import { AuthPageComponent } from "./pages/auth-page/auth-page.component";
 import { NextEventResolver } from "./resolvers/next-event.resolver";
+import { AuthService } from "./services/auth.service";
+import { LoadUserGuard } from "./guards/load-user.guard";
+import { RegisterComponent } from "./pages/auth-page/register/register.component";
+import { LoginComponent } from "./pages/auth-page/login/login.component";
 
 const routes: Routes = [
-  { path: "", component: StartPageComponent, resolve: { appEvent: NextEventResolver } },
   {
-    path: "events",
-    component: EventsPageComponent,
+    path: "",
+    canActivate: [LoadUserGuard],
     children: [
-      { path: "edit", component: EventEditorComponent },
+      { path: "", component: StartPageComponent, resolve: { appEvent: NextEventResolver } },
       {
-        path: "edit/:id",
-        component: EventEditorComponent,
-        resolve: { appEvent: EventResolver }
-      }
-    ]
-  },
-  {
-    path: "calendar",
-    component: CalendarPageComponent,
-    resolve: { calendarEvents: CalendarEventsResolver }
-  },
-  {
-    path: "calendar/:id",
-    component: CalendarPageComponent,
-    runGuardsAndResolvers: "pathParamsChange",
-    resolve: { calendarEvents: CalendarEventsResolver }
-  },
-  {
-    path: "auth",
-    children: [
-      {
-        path: "",
-        redirectTo: "login",
-        pathMatch: "full"
+        path: "events",
+        component: EventsPageComponent,
+        children: [
+          { path: "edit", component: EventEditorComponent },
+          {
+            path: "edit/:id",
+            component: EventEditorComponent,
+            resolve: { appEvent: EventResolver }
+          }
+        ]
       },
       {
-        path: "register",
-        component: AuthPageComponent
+        path: "calendar",
+        component: CalendarPageComponent,
+        resolve: { calendarEvents: CalendarEventsResolver }
       },
       {
-        path: "login",
-        component: AuthPageComponent
+        path: "calendar/:id",
+        component: CalendarPageComponent,
+        runGuardsAndResolvers: "pathParamsChange",
+        resolve: { calendarEvents: CalendarEventsResolver }
+      },
+      {
+        path: "auth",
+        component: AuthPageComponent,
+        children: [
+          {
+            path: "",
+            redirectTo: "login",
+            pathMatch: "full"
+          },
+          {
+            path: "register",
+            component: RegisterComponent
+          },
+          {
+            path: "login",
+            component: LoginComponent
+          }
+        ]
       }
     ]
   },

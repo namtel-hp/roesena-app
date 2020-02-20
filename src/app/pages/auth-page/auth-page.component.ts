@@ -8,10 +8,5 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./auth-page.component.scss"]
 })
 export class AuthPageComponent {
-  public userInput = {
-    email: "",
-    password: "",
-    name: ""
-  };
   constructor(public auth: AuthService, public route: ActivatedRoute) {}
 }

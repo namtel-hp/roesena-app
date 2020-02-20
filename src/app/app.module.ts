@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { environment } from "../environments/environment";
 import { AngularFireModule } from "@angular/fire";
@@ -12,9 +12,11 @@ import { SharedModule } from "./shared/shared.module";
 import { StartPageComponent } from "./pages/start-page/start-page.component";
 import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
 import { EventsPageComponent } from "./pages/events-page/events-page.component";
-import { EventEditorComponent } from './pages/events-page/event-editor/event-editor.component';
-import { CalendarPageComponent } from './pages/calendar-page/calendar-page.component';
-import { AuthPageComponent } from './pages/auth-page/auth-page.component';
+import { EventEditorComponent } from "./pages/events-page/event-editor/event-editor.component";
+import { CalendarPageComponent } from "./pages/calendar-page/calendar-page.component";
+import { AuthPageComponent } from "./pages/auth-page/auth-page.component";
+import { LoginComponent } from "./pages/auth-page/login/login.component";
+import { RegisterComponent } from "./pages/auth-page/register/register.component";
 
 @NgModule({
   declarations: [
@@ -24,11 +26,14 @@ import { AuthPageComponent } from './pages/auth-page/auth-page.component';
     EventsPageComponent,
     EventEditorComponent,
     CalendarPageComponent,
-    AuthPageComponent
+    AuthPageComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AppRoutingModule,
