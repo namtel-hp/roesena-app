@@ -1,11 +1,8 @@
 import { Component } from "@angular/core";
-import { Observable } from "rxjs";
-import { map, filter } from "rxjs/operators";
-import { AngularFirestore } from "@angular/fire/firestore";
-import "firebase/firestore";
-
-import { appEvent } from "src/app/interfaces";
 import { ActivatedRoute } from "@angular/router";
+import { Observable } from "rxjs";
+
+import { appEvent } from "../../utils/interfaces";
 
 @Component({
   selector: "app-start-page",

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { appEvent } from "src/app/interfaces";
+import { appEvent } from "../../../utils/interfaces";
 import { AuthService } from "src/app/services/auth.service";
 
 @Component({

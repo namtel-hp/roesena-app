@@ -3,6 +3,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { BehaviorSubject, Subscription, Observable, from } from "rxjs";
 import { map } from "rxjs/operators";
+import "firebase/firestore";
 
 @Injectable({
   providedIn: "root"
@@ -25,12 +26,12 @@ export class AuthService implements OnDestroy {
               .subscribe(docRef => {
                 // update the BehaviourSubject with the user
                 this.$user.next({ name: docRef.data().name, id: user.uid, authLevel: docRef.data().authLevel });
+                console.log(this.$user.getValue());
               })
           );
         } else {
           this.$user.next(null);
         }
-        console.log(this.$user.getValue());
       })
     );
   }

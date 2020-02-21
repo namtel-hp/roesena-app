@@ -3,12 +3,12 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/r
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
-import "firebase/firestore";
 
-import { appEvent } from "../interfaces";
+import { appEvent } from "../utils/interfaces";
+import { convertEventFromDocument } from "../utils/eventConverter";
 
 @Injectable({ providedIn: "root" })
-export class EventResolver implements Resolve<appEvent> {
+export class EventByIdResolver implements Resolve<appEvent> {
   constructor(private firestore: AngularFirestore) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
@@ -16,14 +16,6 @@ export class EventResolver implements Resolve<appEvent> {
       .collection("events")
       .doc(route.paramMap.get("id"))
       .get()
-      .pipe(
-        map(doc => {
-          let data = doc.data();
-          data.id = doc.id;
-          data.startDate = new Date(data.startDate.toDate());
-          data.endDate = new Date(data.endDate.toDate());
-          return data;
-        })
-      );
+      .pipe(map(convertEventFromDocument));
   }
 }

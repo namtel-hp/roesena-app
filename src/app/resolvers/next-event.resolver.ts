@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
-import { Observable, combineLatest } from "rxjs";
-import { map, tap } from "rxjs/operators";
-import { AngularFirestore, QuerySnapshot, DocumentData } from "@angular/fire/firestore";
-import "firebase/firestore";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { AngularFirestore } from "@angular/fire/firestore";
 
-import { appEvent } from "../interfaces";
+import { appEvent } from "../utils/interfaces";
 import { AuthService } from "../services/auth.service";
+import { convertEventsFromDocuments } from "../utils/eventConverter";
 
 @Injectable({ providedIn: "root" })
 export class NextEventResolver implements Resolve<appEvent> {
@@ -20,7 +20,7 @@ export class NextEventResolver implements Resolve<appEvent> {
       .get()
       .pipe(
         // map documents to events
-        map(eventConverter),
+        map(convertEventsFromDocuments),
         // sort the events
         map(el => el.sort((a, b) => b.endDate.getTime() - a.endDate.getTime())),
         // filter out all the ones that are already over
@@ -29,15 +29,4 @@ export class NextEventResolver implements Resolve<appEvent> {
         map(el => el[0])
       );
   }
-}
-
-function eventConverter(snapshot: QuerySnapshot<DocumentData[]>): appEvent[] {
-  let data: any[] = snapshot.docs.map(doc => {
-    let data: any = doc.data();
-    data.id = doc.id;
-    data.startDate = new Date(data.startDate.toDate());
-    data.endDate = new Date(data.endDate.toDate());
-    return data;
-  });
-  return data;
 }

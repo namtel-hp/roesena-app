@@ -1,21 +1,33 @@
-import { Component, OnInit } from "@angular/core";
-import { AuthService } from "src/app/services/auth.service";
+import { Component, OnDestroy } from "@angular/core";
 import { FormGroup, FormControl } from "@angular/forms";
+import { Router } from "@angular/router";
+import { Subscription } from "rxjs";
+
+import { AuthService } from "../../../services/auth.service";
 
 @Component({
   selector: "app-register",
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.scss"]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnDestroy {
   registerForm = new FormGroup({
     name: new FormControl(""),
     email: new FormControl(""),
     password: new FormControl("")
   });
-  constructor(public auth: AuthService) {}
+  private sub: Subscription;
+  constructor(public auth: AuthService, router: Router) {
+    this.sub = this.auth.$user.subscribe(el => {
+      if (el) {
+        router.navigate(["auth"]);
+      }
+    });
+  }
 
-  ngOnInit(): void {}
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
 
   public onSubmit() {}
 }

@@ -6,12 +6,11 @@ import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.com
 import { EventsPageComponent } from "./pages/events-page/events-page.component";
 import { EventEditorComponent } from "./pages/events-page/event-editor/event-editor.component";
 
-import { EventResolver } from "./resolvers/event.resolver";
+import { EventByIdResolver } from "./resolvers/event-by-id.resolver";
 import { CalendarPageComponent } from "./pages/calendar-page/calendar-page.component";
 import { CalendarEventsResolver } from "./resolvers/calendar-events.resolver";
 import { AuthPageComponent } from "./pages/auth-page/auth-page.component";
 import { NextEventResolver } from "./resolvers/next-event.resolver";
-import { AuthService } from "./services/auth.service";
 import { LoadUserGuard } from "./guards/load-user.guard";
 import { RegisterComponent } from "./pages/auth-page/register/register.component";
 import { LoginComponent } from "./pages/auth-page/login/login.component";
@@ -30,7 +29,7 @@ const routes: Routes = [
           {
             path: "edit/:id",
             component: EventEditorComponent,
-            resolve: { appEvent: EventResolver }
+            resolve: { appEvent: EventByIdResolver }
           }
         ]
       },
@@ -47,12 +46,10 @@ const routes: Routes = [
       },
       {
         path: "auth",
-        component: AuthPageComponent,
         children: [
           {
             path: "",
-            redirectTo: "login",
-            pathMatch: "full"
+            component: AuthPageComponent
           },
           {
             path: "register",

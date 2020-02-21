@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { appEvent } from "src/app/interfaces";
+import { appEvent } from "../../utils/interfaces";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -56,7 +56,6 @@ export class CalendarPageComponent implements OnDestroy {
     this.subs.push(this.route.paramMap.subscribe(pMap => (this.id = pMap.get("id"))));
     this.subs.push(
       this.route.data.subscribe(data => {
-        console.log(data);
         const dayAmount = new Date(this.year, this.month + 1, 0).getDate();
         const offset = this.mondayFirstOffset;
         this.dayTemplate = new Array(dayAmount).fill(undefined).map(
