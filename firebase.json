@@ -1,0 +1,19 @@
+{
+  "hosting": [
+    {
+      "target": "roesena-app",
+      "public": "dist/roesena-app",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

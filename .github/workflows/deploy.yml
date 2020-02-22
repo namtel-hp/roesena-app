@@ -1,20 +1,23 @@
-name: deploy app
+name: Deploy to Firebase
+
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
+
 jobs:
-  deploy:
+  deploy_to_firebase:
     runs-on: ubuntu-latest
+
     steps:
-      - name: clone repo and compose on server with ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            [ -d "./roesena-app" ] && cd roesena-app && docker-compose down && cd ..
-            sudo rm -f -R roesena-app
-            git clone --single-branch --branch master https://github.com/jgero/roesena-app.git
-            cd roesena-app
-            make prod
+      - name: Checkout master
+        uses: actions/checkout@v1
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+
+      - name: Install packages for app
+        run: npm install
+
+      - name: Deploy to Firebase
+        run: npm run deploy

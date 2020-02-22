@@ -1,0 +1,32 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow-y: auto;
+
+  .eventWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    width: 70%;
+  }
+
+  button {
+    $size: 4rem;
+    position: fixed;
+    left: calc(50% - #{($size / 2)});
+    bottom: 3rem;
+    width: $size;
+    height: $size;
+    border-radius: #{$size / 2};
+    padding: 0;
+
+    i {
+      font-size: $size;
+    }
+  }
+}

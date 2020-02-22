@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "sechta-narren": {
+      "hosting": {
+        "roesena-app": [
+          "sechta-narren"
+        ]
+      }
+    }
+  }
+}

@@ -1,40 +1,52 @@
-# RöSeNa-App
+# RoesenaApp
 
-## prerequisites
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.1.
 
-- docker and docker-compose has to be installed
-- internet connection
+## Development server
 
-## run it
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-Each time the containers are started with docker-compose the demo data will be added. To delete the old containers run `docker-compose down`. When some things still are not updating use the `up --build` option to force re-building of the image.
+## Code scaffolding
 
-### development
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-`docker-compose up`
+## Build
 
-Starts the database, the temporary container that imports the JSON seeds into the database and the app. A dev server is started with all ports configured, so that live reloading is enabled.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-### production
+## Running unit tests
 
-`docker-compose -f docker-compose.yml up`
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-Spins up the database like in development, the app is built without the dev-dependencies and without the volumes.
+## Running end-to-end tests
 
-### test
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-Tests can be run with `make test`, which just cleans up any remaining containers and starts `docker-compose -f docker-compose.yml -f docker-compose.test.yml up --exit-code-from cypress --abort-on-container-exit cypress`.
+## Further help
 
-Builds the production version with the production compose files of the app and runs the cypress tests. This ensures, that the actual production verion of the app works and there will be no differences between testing and production environments. All the test are written in a way, that the order and amout of executions does not matter, for example if deleting elements is tested, they get inserted with the same values again afterwards. A drawback of this is, that ID's are not predictable, so when ID's are checked a regex is used, which could lead to very specific undetected errors.
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
-## tools
+## Firebase
 
-For easy deployment to the remote host with ssh [appleboy/ssh-action](https://github.com/appleboy/ssh-action) is used in the deployment action.
+deploy with `ng deploy`
 
-## database
+access firesore:
 
-### Export data
+```
+import { Component } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import 'firebase/firestore';
 
-#### to JSON
-
-To export a single collection in the databse in JSON format run `mongoexport --collection=<collection-name> --db=<db-name>` in the shell of the container, not the mongo shell of the database.
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.css']
+})
+export class AppComponent {
+  items: Observable<any[]>;
+  constructor(firestore: AngularFirestore) {
+    this.items = firestore.collection('items').valueChanges();
+  }
+}
+```

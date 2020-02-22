@@ -1,0 +1,14 @@
+<h3>{{ event.title }}</h3>
+<h4>
+  <time [dateTime]="event.startDate">{{ event.startDate | toLocalDateString }}</time
+  >-<time [dateTime]="event.endDate">{{ event.endDate | toLocalDateString }}</time>
+</h4>
+<p>{{ event.description }}</p>
+
+<i
+  class="material-icons edit"
+  *ngIf="(auth.$user | async) && event.authLevel <= (auth.$user | async).authLevel"
+  [routerLink]="'/events/edit/' + event.id"
+  >edit</i
+>
+<i class="material-icons details" [routerLink]="'/events/details/' + event.id">zoom_out_map</i>
