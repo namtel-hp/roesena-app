@@ -1,0 +1,23 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy_to_firebase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v1
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+
+      - name: Install packages for app
+        run: npm install
+
+      - name: Deploy to Firebase
+        run: npm run deploy
