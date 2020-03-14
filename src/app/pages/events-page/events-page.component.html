@@ -1,9 +1,0 @@
-<h1>RöSeNa Veranstaltungen und Termine</h1>
-
-<div class="eventWrapper">
-  <app-event-card *ngFor="let event of events | async" [event]="event" [routerLink]="'/events/edit/' + event.id"></app-event-card>
-</div>
-
-<button routerLink="/events/edit"><i class="material-icons">add</i></button>
-
-<router-outlet></router-outlet>

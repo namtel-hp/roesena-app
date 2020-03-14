@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--on-surface);
+  background-color: var(--surface);
+  box-shadow: 0 2px 5px 0px var(--on-background);
+  border-radius: 0.5rem;
+  margin: 1rem;
+
+  .spacer {
+    display: block;
+    height: 1px;
+    width: 100%;
+    background-color: var(--primary);
+    margin: 0.5rem 0;
+  }
+
+  p {
+    margin: 0.5rem;
+    max-height: 6rem;
+    overflow: hidden;
+  }
+
+  i {
+    margin: 0.2rem;
+    cursor: pointer;
+    transition: color ease-out 0.2s;
+
+    &:focus,
+    &:active,
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .buttonWrapper {
+    margin: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,43 @@
+:host {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr;
+  grid-template-areas: "main";
+  grid-template-rows: 1fr;
+
+  @media only screen and (min-width: 1000px) {
+    grid-template-columns: 1fr 7fr;
+    grid-template-areas: "sideNav main";
+  }
+
+  app-nav-bar {
+    grid-area: sideNav;
+  }
+
+  app-auth-status {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  img {
+    position: absolute;
+    pointer-events: none;
+    height: 90vh;
+    top: 5vh;
+    right: 10vw;
+    opacity: 0.4;
+    transition: opacity ease-out 0.2s;
+    z-index: -1;
+
+    &.opac {
+      opacity: 1;
+    }
+  }
+
+  main {
+    grid-area: main;
+    overflow-y: auto;
+  }
+}

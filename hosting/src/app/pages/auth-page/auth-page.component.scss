@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+
+  header {
+    width: 100%;
+
+    h1 {
+      position: relative;
+    }
+  }
+}

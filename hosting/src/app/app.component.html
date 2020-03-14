@@ -1,0 +1,13 @@
+<app-nav-bar></app-nav-bar>
+<img
+  src="assets/wappen.svg"
+  alt="RöSeNa-Wappen"
+  routerLink="/"
+  routerLinkActive="opac"
+  [routerLinkActiveOptions]="{ exact: true }"
+/>
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<app-loading *ngIf="(loading.$isLoading | async) > 0"></app-loading>

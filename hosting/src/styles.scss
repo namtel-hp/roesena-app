@@ -1,0 +1,63 @@
+body {
+  font-family: Roboto;
+  box-sizing: border-box;
+
+  --primary: #1a237e;
+  --on-primary: #ffffff;
+  --background: #ffffff;
+  --on-background: #000000;
+  --surface: #ffffff;
+  --on-surface: #000000;
+  --on-surface-light: #dddddd;
+  --error: #ad150d;
+  --on-error: #ffffff;
+}
+
+@import "src/app/shared/partials/button.scss";
+
+h1 {
+  background-color: var(--primary);
+  color: var(--on-primary);
+  margin: 0;
+  padding: 1rem;
+  font-size: 2rem;
+  width: 100%;
+  @media only screen and (min-width: 1000px) {
+    font-size: 3rem;
+  }
+  text-align: center;
+  box-shadow: 0 0px 5px 0px var(--on-background);
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin: 0.5rem;
+  margin-bottom: 0;
+}
+
+h4 {
+  margin: 0;
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--on-surface);
+  opacity: 0.6;
+}
+
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: inherit;
+  outline: none;
+}
