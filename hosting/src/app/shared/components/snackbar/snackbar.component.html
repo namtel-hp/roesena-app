@@ -1,0 +1,4 @@
+<footer [@inOutAnimation] *ngIf="($data | async).isVisible">
+  <p>{{ ($data | async).message }}</p>
+  <button class="text" (click)="onConfirm()">OK</button>
+</footer>

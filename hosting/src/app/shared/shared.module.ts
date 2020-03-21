@@ -12,6 +12,7 @@ import { InputComponent } from "./components/input/input.component";
 import { DropdownComponent } from "./components/dropdown/dropdown.component";
 import { PersonManagerComponent } from "./components/person-manager/person-manager.component";
 import { TabBarComponent } from "./components/tab-bar/tab-bar.component";
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 const components = [
   NavBarComponent,
@@ -20,7 +21,7 @@ const components = [
   InputComponent,
   DropdownComponent,
   PersonManagerComponent,
-  TabBarComponent
+  TabBarComponent, SnackbarComponent
 ];
 const pipes = [ToLocalDateStringPipe, ToLocalTimeStringPipe];
 

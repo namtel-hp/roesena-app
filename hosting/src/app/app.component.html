@@ -6,8 +6,10 @@
   routerLinkActive="opac"
   [routerLinkActiveOptions]="{ exact: true }"
 />
-<main>
-  <router-outlet></router-outlet>
+<main [@routeAnimation]="prepareRoute(outlet)">
+  <div class="loader" *ngIf="trace.$isLoading | async">
+    <app-loading [$isLoading]="trace.$isLoading"></app-loading>
+  </div>
+  <router-outlet #outlet="outlet"></router-outlet>
+  <app-snackbar [message]="trace.$snackbarMessage"></app-snackbar>
 </main>
-
-<app-loading *ngIf="(loading.$isLoading | async) > 0"></app-loading>
