@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+
+  .filteringWrapper,
+  .card.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--content-spacing);
+  }
+
+  .filteringWrapper {
+    padding-bottom: 0;
+
+    i {
+      font-size: 2rem;
+      padding: 0;
+      transition: transform 0.2s ease-out;
+
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+
+    button {
+      margin-right: 0.5rem;
+    }
+
+    .search,
+    .filter {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .eventWrapper {
+    display: grid;
+    width: 100%;
+    padding: var(--content-spacing);
+    grid-template-columns: var(--card-grid-columns);
+    grid-auto-rows: min-content;
+  }
+}

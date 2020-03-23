@@ -1,7 +1,0 @@
-<h1>Veranstaltungen und Termine</h1>
-
-<div class="eventWrapper">
-  <app-event-card *ngFor="let event of $events | async" [event]="event"></app-event-card>
-</div>
-
-<button routerLink="/events/edit" class="floating-action outlined"><i class="material-icons">add</i></button>
