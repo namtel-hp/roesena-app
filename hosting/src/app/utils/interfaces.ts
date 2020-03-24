@@ -14,3 +14,10 @@ export interface appPerson {
   name: string;
   authLevel: number;
 }
+
+export interface appImage {
+  id: string;
+  title: string;
+  tags: string[];
+  ownerId: string;
+}
