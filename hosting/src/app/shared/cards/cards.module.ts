@@ -2,12 +2,14 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-import { EventCardComponent } from "./event-card/event-card.component";
-
 import { ConvertersModule } from "../converters/converters.module";
-import { ImageCardComponent } from "./image-card/image-card.component";
 
-const components = [EventCardComponent, ImageCardComponent];
+import { EventCardComponent } from "./event-card/event-card.component";
+import { ImageCardComponent } from "./image-card/image-card.component";
+import { ArticleCardComponent } from "./article-card/article-card.component";
+import { TagsComponent } from "./tags/tags.component";
+
+const components = [EventCardComponent, ImageCardComponent, ArticleCardComponent, TagsComponent];
 
 @NgModule({
   declarations: components,
