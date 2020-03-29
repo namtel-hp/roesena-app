@@ -1,11 +1,11 @@
 :host {
   display: flex;
   flex-direction: column;
+  height: min-content;
 
   img {
     max-width: 100%;
     padding: 0.5rem;
-    padding-bottom: 0;
   }
 
   .buttonWrapper {

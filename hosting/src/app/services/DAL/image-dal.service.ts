@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AngularFireStorage } from "@angular/fire/storage";
-import { QuerySnapshot, DocumentData, DocumentSnapshot } from "@angular/fire/firestore/interfaces";
+import { QuerySnapshot, DocumentData, DocumentSnapshot, CollectionReference, Query } from "@angular/fire/firestore/interfaces";
 import { Observable, of, from } from "rxjs";
 import { tap, catchError, map, switchMap } from "rxjs/operators";
 import "firebase/firestore";
@@ -10,6 +10,7 @@ import "firebase/storage";
 import { TracingStateService } from "../tracing-state.service";
 import { appImage } from "src/app/utils/interfaces";
 import { AuthService } from "../auth.service";
+import { tagArrayToMap, tagMapToArray } from "src/app/utils/tag-converters";
 
 @Injectable({
   providedIn: "root"
@@ -59,6 +60,32 @@ export class ImageDalService {
       );
   }
 
+  getByTags(tags: string[], limit: number = 1): Observable<appImage[]> {
+    this.trace.addLoading();
+    return this.firestore
+      .collection<appImage>("images", qFn => {
+        let query: CollectionReference | Query = qFn;
+        tags.forEach(tag => {
+          query = query.where(`tags.${tag}`, "==", true);
+        });
+        query = query.limit(limit);
+        return query;
+      })
+      .get()
+      .pipe(
+        map(convertImagesFromDocuments),
+        tap(() => {
+          this.trace.completeLoading();
+        }),
+        catchError(err => {
+          console.log(err);
+          this.trace.completeLoading();
+          this.trace.$snackbarMessage.next(`Bilder konnten nicht geladen werden: ${err}`);
+          return of([]);
+        })
+      );
+  }
+
   getDownloadURL(id: string): Observable<string | null> {
     return this.storage
       .ref("uploads")
@@ -66,9 +93,13 @@ export class ImageDalService {
       .getDownloadURL();
   }
 
-  insert(title: string, file: string, tags: string[]): Observable<boolean> {
+  insert(file: string, tags: string[]): Observable<boolean> {
     this.trace.addLoading();
-    return from(this.firestore.collection("images").add({ title, tags, ownerId: this.auth.$user.getValue().id })).pipe(
+    return from(
+      this.firestore
+        .collection("images")
+        .add({ tags: tagArrayToMap(tags), ownerId: this.auth.$user.getValue().id, created: new Date() })
+    ).pipe(
       switchMap(docRef => this.storage.ref(`uploads/${docRef.id}`).putString(file, "data_url")),
       map(() => true),
       tap(() => {
@@ -86,6 +117,7 @@ export class ImageDalService {
   update(img: appImage, file: string): Observable<boolean> {
     this.trace.addLoading();
     const id = img.id;
+    (img.tags as any) = tagArrayToMap(img.tags);
     delete img.id;
     return from(
       this.firestore
@@ -133,6 +165,8 @@ export class ImageDalService {
 function convertImagesFromDocuments(snapshot: QuerySnapshot<DocumentData[]>): appImage[] {
   let data: any[] = snapshot.docs.map(doc => {
     let data: any = doc.data();
+    data.tags = tagMapToArray(data.tags);
+    data.created = new Date(data.created.toDate());
     data.id = doc.id;
     return data;
   });
@@ -141,6 +175,8 @@ function convertImagesFromDocuments(snapshot: QuerySnapshot<DocumentData[]>): ap
 
 function convertImageFromDocument(snapshot: DocumentSnapshot<DocumentData>): appImage {
   let data = snapshot.data();
+  data.tags = tagMapToArray(data.tags);
+  data.created = new Date(data.created.toDate());
   data.id = snapshot.id;
   return data as appImage;
 }
