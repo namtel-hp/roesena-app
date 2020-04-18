@@ -1,29 +1,51 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Observable } from "rxjs";
+import { Component, OnDestroy } from "@angular/core";
+import { FormControl, Validators, FormGroup } from "@angular/forms";
+import { Observable, Subscription } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { appEvent } from "src/app/utils/interfaces";
 import { AuthService } from "src/app/services/auth.service";
+import { EventDALService } from "src/app/services/DAL/event-dal.service";
 import { PersonDalService } from "src/app/services/DAL/person-dal.service";
+
+interface appEventWithForm extends appEvent {
+  form: FormGroup;
+}
 
 @Component({
   selector: "app-my-events",
   templateUrl: "./my-events.component.html",
-  styleUrls: ["./my-events.component.scss"]
+  styleUrls: ["./my-events.component.scss"],
 })
-export class MyEventsComponent {
-  $events: Observable<appEvent[]>;
+export class MyEventsComponent implements OnDestroy {
+  $data: Observable<appEventWithForm[]>;
+  displayedColumns: string[] = ["title", "deadline", "response"];
+  private subs: Subscription[] = [];
 
-  constructor(route: ActivatedRoute, public auth: AuthService, private personDAO: PersonDalService) {
-    this.$events = route.snapshot.data.events;
+  constructor(private eventDAO: EventDALService, private personDAO: PersonDalService, private auth: AuthService) {
+    this.$data = this.eventDAO.getRespondables().pipe(
+      map((events) => {
+        return events.map((event) => {
+          const participant = event.participants.find((participant) => participant.id === this.auth.$user.getValue().id);
+          return {
+            ...event,
+            form: new FormGroup({
+              amount: new FormControl(participant.amount >= 0 ? participant.amount : null, [
+                Validators.required,
+                Validators.pattern("^[0-9]*$"),
+              ]),
+            }),
+          };
+        });
+      })
+    );
   }
 
-  respondToEvent(eventId: string, formData: any) {
-    this.personDAO.respondToEvent(eventId, parseInt(formData.amount)).subscribe();
+  onSubmit(eventId: string, amount: number, form: FormGroup) {
+    this.subs.push(this.personDAO.respondToEvent(eventId, amount).subscribe({ next: () => form.markAsPristine() }));
   }
 
-  getAmountFromEvent(userId: string, ev: appEvent): number {
-    const amount = ev.participants.find(participant => participant.id === userId).amount;
-    return amount >= 0 ? amount : null;
+  ngOnDestroy() {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

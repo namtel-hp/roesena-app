@@ -1,0 +1,14 @@
+:host {
+  background-image: url("src/assets/icon.svg");
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  background-position: right;
+  background-repeat: no-repeat;
+
+  .cardContainer > * {
+    display: block;
+    max-width: 400px;
+    margin-top: 1rem;
+  }
+}

@@ -1,0 +1,21 @@
+.sidenav-container {
+  height: calc(100% - 64px);
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.button-container {
+  margin: 0.5rem;
+}
+
+.sidenav .mat-toolbar a {
+  font-size: 2rem;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}

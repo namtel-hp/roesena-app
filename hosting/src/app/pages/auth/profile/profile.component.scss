@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+main {
+  max-width: 800px;
+  width: 100%;
+
+  button {
+    margin-left: 16px;
+  }
+}

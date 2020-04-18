@@ -1,21 +1,54 @@
-<h1>Artikel bearbeiten</h1>
+<mat-toolbar [color]="'accent'">Artikel Bearbeiten</mat-toolbar>
+<form *ngIf="$data | async as article; else loading" [formGroup]="articleForm" (ngSubmit)="onSubmit()">
+  <a [style.grid-area]="'close'" mat-icon-button [routerLink]="'/articles/overview'"><mat-icon>close</mat-icon></a>
 
-<form class="card" #articleForm="ngForm" (ngSubmit)="onSubmit(articleForm.value)">
-  <button type="button" routerLink="/articles/overview" class="text close"><i class="material-icons">close</i>SCHLIESSEN</button>
-  <app-input [style.grid-area]="'title'" name="title" label="Titel" [ngModel]="article.title" [required]="true"></app-input>
-  <app-input
-    [style.grid-area]="'content'"
-    name="content"
-    label="Inhalt"
-    type="area"
-    [ngModel]="article.content"
-    [required]="true"
-  ></app-input>
-  <app-tag-input [style.grid-area]="'tags'" name="tags" [ngModel]="article.tags"></app-tag-input>
-  <button type="submit" [disabled]="articleForm.invalid" class="contained" [style.grid-area]="'save'">
-    <i class="material-icons">save</i>SPEICHERN
+  <mat-form-field [style.grid-area]="'title'">
+    <mat-label>Titel</mat-label>
+    <input matInput formControlName="title" />
+    <mat-error *ngIf="articleForm.controls.title.invalid"> {{ getErrorMessage(articleForm.controls.title) }} </mat-error>
+  </mat-form-field>
+
+  <mat-form-field [style.grid-area]="'content'">
+    <mat-label>Inhalt</mat-label>
+    <textarea matInput [rows]="10" formControlName="content"></textarea>
+  </mat-form-field>
+
+  <mat-form-field [style.grid-area]="'tags'">
+    <mat-chip-list #chipList aria-label="tag Auswahl" formControlName="tags">
+      <mat-chip *ngFor="let tag of articleForm.get('tags').value" (removed)="removeTag(tag)">
+        {{ tag }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Tags"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addTag($event)"
+      />
+    </mat-chip-list>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    type="submit"
+    [color]="'primary'"
+    [style.grid-area]="'save'"
+    [disabled]="articleForm.invalid || !articleForm.dirty"
+  >
+    <mat-icon>save</mat-icon> SPEICHERN
   </button>
-  <button type="button" (click)="onDelete()" [disabled]="isNew" class="contained delete" [style.grid-area]="'delete'">
-    <i class="material-icons">delete</i>LÖSCHEN
+  <button
+    mat-raised-button
+    type="button"
+    [color]="'warn'"
+    [style.grid-area]="'delete'"
+    [disabled]="article.id === ''"
+    (click)="deleteArticle()"
+  >
+    <mat-icon>delete</mat-icon> LÖSCHEN
   </button>
 </form>
+
+<ng-template #loading>
+  <mat-progress-spinner></mat-progress-spinner>
+</ng-template>

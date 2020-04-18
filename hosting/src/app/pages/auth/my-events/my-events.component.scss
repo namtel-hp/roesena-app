@@ -1,44 +1,27 @@
-@import "../../../shared/partials/card.scss";
-
 :host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main {
   width: 100%;
-  padding: var(--content-spacing);
-  margin-bottom: 6rem;
+  max-width: 800px;
+  margin-top: 16px;
 
-  display: grid;
-  grid-template-columns: var(--card-grid-columns);
-  grid-auto-rows: min-content;
-  row-gap: 1rem;
-  column-gap: 1rem;
+  table {
+    width: 100%;
 
-  form {
-    display: grid;
-    grid-template-columns: 5fr 1fr;
-    grid-template-rows: auto auto 1rem auto;
-    grid-template-areas: "name button" "date ." ". ." "input input";
-    padding: 0.5rem;
-
-    h3 {
-      grid-area: name;
-      margin: 0;
+    .mat-form-field {
+      width: 100px;
     }
 
-    h4 {
-      grid-area: date;
-      margin: 0;
-    }
-
-    app-input {
-      grid-area: input;
+    ::ng-deep.mat-badge.hide-text .mat-badge-content {
+      color: transparent;
     }
 
     button {
-      grid-area: button;
-    }
-
-    app-input.ng-pristine + button,
-    app-input.ng-invalid + button {
-      visibility: hidden;
+      margin-left: 8px;
     }
   }
 }

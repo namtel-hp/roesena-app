@@ -1,29 +1,27 @@
 :host {
-  display: block;
-  margin-bottom: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  form {
-    padding: 1rem;
-    margin: var(--content-spacing);
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1rem 4rem min-content min-content 4rem;
-    row-gap: 1rem;
-    grid-template-areas: ". ." "title title" "content content" "tags tags" "save delete";
+form {
+  display: grid;
+  width: 100%;
+  max-width: 800px;
+  padding: 8px;
+  box-sizing: border-box;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  grid-template-rows: auto auto auto auto auto;
+  row-gap: 16px;
+  grid-template-areas:
+    ". close"
+    "title title"
+    "content content"
+    "tags tags"
+    "save delete";
 
-    & > * {
-      align-self: center;
-    }
-
-    button.delete {
-      justify-self: right;
-    }
-
-    button.close {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
+  a {
+    justify-self: right;
   }
 }

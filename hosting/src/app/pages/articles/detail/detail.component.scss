@@ -1,21 +1,15 @@
 :host {
-  display: block;
-  margin-bottom: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .content {
-    margin: var(--content-spacing);
-    padding: 1rem;
-    position: relative;
+main {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 16px;
 
-    button {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
-
-    p {
-      white-space: pre-line;
-      max-height: unset;
-    }
+  p {
+    white-space: pre-line;
   }
 }

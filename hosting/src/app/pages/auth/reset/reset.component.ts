@@ -1,28 +1,49 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
+import { filter } from "rxjs/operators";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-reset",
   templateUrl: "./reset.component.html",
-  styleUrls: ["./reset.component.scss"]
+  styleUrls: ["./reset.component.scss"],
 })
-export class ResetComponent {
-  hasCode = false;
-  private code: string;
+export class ResetComponent implements OnDestroy {
+  resetForm = new FormGroup({
+    email: new FormControl("", [Validators.required, Validators.email]),
+  });
+  newPasswordForm = new FormGroup({
+    password: new FormControl("", [Validators.required, Validators.minLength(8)]),
+  });
+  public code: string;
+  private subs: Subscription[] = [];
 
   constructor(route: ActivatedRoute, private auth: AuthService, private router: Router) {
     if (route.snapshot.queryParamMap.get("mode") === "resetPassword" && route.snapshot.queryParamMap.get("oobCode")) {
-      this.hasCode = true;
       this.code = route.snapshot.queryParamMap.get("oobCode");
     }
+    this.subs.push(
+      this.auth.$user.pipe(filter((el) => !!el)).subscribe({
+        next: () => this.router.navigate([""]),
+      })
+    );
   }
 
-  sendResetMail({ email }) {
-    this.auth.sendResetPasswordMail(email).subscribe();
+  onResetSubmit() {
+    this.subs.push(this.auth.sendResetPasswordMail(this.resetForm.get("email").value).subscribe());
   }
 
-  updatePassword({ password }) {
-    this.auth.changePasswordWithResetCode(password, this.code).subscribe({ next: () => this.router.navigate(["/auth/login"]) });
+  onNewPasswordSubmit() {
+    this.subs.push(
+      this.auth.changePasswordWithResetCode(this.newPasswordForm.get("password").value, this.code).subscribe({
+        next: () => this.router.navigate(["auth", "login"]),
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

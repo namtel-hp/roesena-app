@@ -1,26 +1,37 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 
 import { ArticlesRoutingModule } from "./articles-routing.module";
 import { OverviewComponent } from "./overview/overview.component";
-import { DetailComponent } from "./detail/detail.component";
 import { EditorComponent } from "./editor/editor.component";
+import { DetailComponent } from "./detail/detail.component";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatIconModule } from "@angular/material/icon";
+import { MatGridListModule } from "@angular/material/grid-list";
 import { CardsModule } from "src/app/shared/cards/cards.module";
-import { FiltersModule } from "src/app/shared/filters/filters.module";
-import { CustomFormElementsModule } from "src/app/shared/custom-form-elements/custom-form-elements.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ConvertersModule } from "src/app/shared/converters/converters.module";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
-  declarations: [OverviewComponent, DetailComponent, EditorComponent],
+  declarations: [OverviewComponent, EditorComponent, DetailComponent],
   imports: [
     CommonModule,
-    ArticlesRoutingModule,
-    CardsModule,
-    FiltersModule,
     FormsModule,
-    CustomFormElementsModule,
-    ConvertersModule
-  ]
+    ReactiveFormsModule,
+    ArticlesRoutingModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatGridListModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    CardsModule,
+    ConvertersModule,
+  ],
 })
 export class ArticlesModule {}

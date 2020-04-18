@@ -1,12 +1,27 @@
-<h1>Artikel</h1>
+<mat-toolbar class="header" [color]="'accent'">
+  <div>
+    <span class="title">Artikel</span>
+    <a mat-icon-button [routerLink]="'/articles/edit'" *ngIf="auth.$user | async">
+      <mat-icon>add</mat-icon>
+    </a>
+  </div>
+  <div class="spacer"></div>
+  <div>
+    <mat-form-field class="search-field">
+      <mat-label>Suchbegriff</mat-label>
+      <input matInput type="text" [(ngModel)]="searchString" />
+      <button *ngIf="searchString" matSuffix mat-icon-button aria-label="clear" (click)="searchString = ''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <button mat-icon-button aria-label="search" (click)="runSearch()">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
 
-<app-search-sort [hasSorting]="true" #searchSort></app-search-sort>
-
-<div class="articleWrapper">
-  <app-article-card
-    *ngFor="let article of $articles | async | articlesByDate: searchSort.searchString:searchSort.descending"
-    [article]="article"
-  ></app-article-card>
-</div>
-
-<button routerLink="/articles/edit" class="floating-action icon outlined"><i class="material-icons">add</i></button>
+<mat-grid-list class="content" [cols]="cols" [rowHeight]="'300px'" [gutterSize]="'16px'">
+  <mat-grid-tile *ngFor="let article of $articles | async">
+    <app-article-card [article]="article"></app-article-card>
+  </mat-grid-tile>
+</mat-grid-list>

@@ -1,20 +1,51 @@
-<form
-  *ngFor="let event of $events"
-  #amountForm="ngForm"
-  (ngSubmit)="respondToEvent(event.id, amountForm.value); amountForm.reset()"
-  class="card"
->
-  <h3>{{ event.title }}</h3>
-  <h4>
-    <time [dateTime]="event.startDate">{{ event.startDate | toLocalDateString }}</time
-    >-<time [dateTime]="event.endDate">{{ event.endDate | toLocalDateString }}</time>
-  </h4>
-  <app-input
-    name="amount"
-    label="Teilnehmerzahl"
-    [required]="true"
-    pattern="^[0-9]+$"
-    [ngModel]="getAmountFromEvent(auth.$user.getValue().id, event)"
-  ></app-input>
-  <button class="text" type="submit">Speichern</button>
-</form>
+<mat-toolbar [color]="'accent'">Meine Events</mat-toolbar>
+
+<main *ngIf="$data | async as events; else loading">
+  <table mat-table [dataSource]="events">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Titel</th>
+      <td mat-cell *matCellDef="let event">
+        <a
+          mat-flat-button
+          class="hide-text"
+          matBadge="{{ event.form.get('amount').value ? '' : 'a' }}"
+          matBadgeSize="small"
+          [routerLink]="'/events/details/' + event.id"
+        >
+          {{ event.title }}
+        </a>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="deadline">
+      <th mat-header-cell *matHeaderCellDef>Deadline</th>
+      <td mat-cell *matCellDef="let event">{{ event.deadline | toLocalDateString }}</td>
+    </ng-container>
+    <ng-container matColumnDef="response">
+      <th mat-header-cell *matHeaderCellDef>Meine Teilnehmerzahl</th>
+      <td mat-cell *matCellDef="let event">
+        <form [formGroup]="event.form" (ngSubmit)="onSubmit(event.id, event.form.get('amount').value, event.form)">
+          <mat-form-field>
+            <mat-label>Teilnehmerzahl</mat-label>
+            <input #input matInput formControlName="amount" />
+            <mat-error *ngIf="event.form.get('amount').invalid"> Bitte Rückmelden </mat-error>
+          </mat-form-field>
+
+          <button
+            mat-stroked-button
+            type="submit"
+            [color]="'primary'"
+            [disabled]="event.form.get('amount').invalid || !event.form.dirty"
+          >
+            <mat-icon>save</mat-icon> SPEICHERN
+          </button>
+        </form>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</main>
+
+<ng-template #loading>
+  <mat-progress-spinner></mat-progress-spinner>
+</ng-template>
