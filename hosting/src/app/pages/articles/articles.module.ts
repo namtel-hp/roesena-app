@@ -4,7 +4,7 @@ import { CommonModule } from "@angular/common";
 import { ArticlesRoutingModule } from "./articles-routing.module";
 import { OverviewComponent } from "./overview/overview.component";
 import { EditorComponent } from "./editor/editor.component";
-import { DetailComponent } from "./detail/detail.component";
+import { DetailsComponent } from "./details/details.component";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -15,9 +15,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ConvertersModule } from "src/app/shared/converters/converters.module";
 import { MatChipsModule } from "@angular/material/chips";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @NgModule({
-  declarations: [OverviewComponent, EditorComponent, DetailComponent],
+  declarations: [OverviewComponent, EditorComponent, DetailsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -30,6 +31,7 @@ import { MatChipsModule } from "@angular/material/chips";
     MatGridListModule,
     MatProgressSpinnerModule,
     MatChipsModule,
+    MatProgressBarModule,
     CardsModule,
     ConvertersModule,
   ],

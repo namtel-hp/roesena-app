@@ -4,14 +4,10 @@ import { appImage } from "src/app/utils/interfaces";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ImageDalService } from "src/app/services/DAL/image-dal.service";
 import { FormGroup, FormControl } from "@angular/forms";
-import { tap, map } from "rxjs/operators";
+import { tap, map, delay } from "rxjs/operators";
 import { AuthService } from "src/app/services/auth.service";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { ENTER, COMMA } from "@angular/cdk/keycodes";
-
-interface appImageWithUrl extends appImage {
-  url: string;
-}
 
 @Component({
   selector: "app-editor",
@@ -28,11 +24,14 @@ export class EditorComponent implements OnDestroy {
 
   constructor(route: ActivatedRoute, private imageDAO: ImageDalService, private router: Router, auth: AuthService) {
     const id = route.snapshot.paramMap.get("id");
-
-    // , imageDAO.getDownloadURL(id))
-
     this.$image = (id
-      ? this.imageDAO.getById(id)
+      ? this.imageDAO.getById(id).pipe(
+          tap((event) => {
+            if (!event) {
+              router.navigate(["images", "overview"]);
+            }
+          })
+        )
       : of<appImage>({ created: new Date(), ownerId: auth.$user.getValue().id, id: "", tags: [] })
     ).pipe(
       tap((image) => {
@@ -51,13 +50,19 @@ export class EditorComponent implements OnDestroy {
   }
 
   onSubmit() {
+    this.imageForm.disable();
     let updated = this.image;
     updated.tags = this.imageForm.get("tags").value;
     const action = this.image.id
-      ? this.imageDAO.update(updated, this.imageForm.get("image").value).pipe(tap(() => this.imageForm.markAsPristine()))
+      ? this.imageDAO.update(updated, this.imageForm.get("image").value).pipe(
+          tap(() => {
+            this.imageForm.enable();
+            this.imageForm.markAsPristine();
+          })
+        )
       : this.imageDAO
           .insert(updated, this.imageForm.get("image").value)
-          .pipe(tap((newId) => this.router.navigate(["articles", "edit", newId])));
+          .pipe(tap((newId) => this.router.navigate(["images", "edit", newId])));
     this.subs.push(action.subscribe(null, null, null));
   }
 

@@ -10,7 +10,7 @@ import {
   QueryDocumentSnapshot,
 } from "@angular/fire/firestore";
 import { Observable, from, of, combineLatest } from "rxjs";
-import { map, catchError, tap } from "rxjs/operators";
+import { map, catchError, tap, delay } from "rxjs/operators";
 import * as fbs from "firebase/app";
 import "firebase/firestore";
 
@@ -65,7 +65,7 @@ export class EventDALService {
       })
       .snapshotChanges()
       .pipe(map(convertMany));
-    if (user) {
+    if (user && user.isConfirmedMember) {
       stream = combineLatest(
         stream,
         // merge the public events with the events where the user is invited
@@ -108,7 +108,8 @@ export class EventDALService {
 
   getRespondables(): Observable<appEvent[]> {
     const user = this.auth.$user.getValue();
-    if (!user) return of([]);
+    // nothing to return if user is not logged in or is not confirmed yet
+    if (!user || !user.isConfirmedMember) return of([]);
     return this.firestore
       .collection<storeableEvent>("events", (qFn) =>
         qFn.where(`deadline`, ">=", new Date()).where("participantsArray", "array-contains", user.id).orderBy("deadline")
@@ -137,15 +138,15 @@ export class EventDALService {
     );
   }
 
-  insert(newEv: appEvent): Observable<boolean> {
+  insert(newEv: appEvent): Observable<string | null> {
     return from(this.firestore.collection<storeableEvent>("events").add(toStorableEvent(newEv))).pipe(
-      map(() => true),
+      map((docRef) => docRef.id),
       tap(() => {
         this.snackbar.open(`Gespeichert!`, "OK", { duration: 2000 });
       }),
       catchError((err) => {
         this.snackbar.open(`Event konnte nicht hinzugefügt werden: ${err}`, "OK");
-        return of(false);
+        return of(null);
       })
     );
   }

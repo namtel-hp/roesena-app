@@ -1,7 +1,5 @@
 <mat-toolbar [color]="'accent'">Event Bearbeiten</mat-toolbar>
 <form *ngIf="$data | async; else loading" [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-  <a [style.grid-area]="'close'" mat-icon-button [routerLink]="'/events/overview'"><mat-icon>close</mat-icon></a>
-
   <mat-form-field [style.grid-area]="'title'">
     <mat-label>Titel</mat-label>
     <input matInput formControlName="title" />
@@ -117,6 +115,7 @@
     </mat-form-field>
   </mat-expansion-panel>
   <button
+    *ngIf="!eventForm.disabled; else saveSpinner"
     mat-raised-button
     type="submit"
     [color]="'primary'"
@@ -125,17 +124,21 @@
   >
     <mat-icon>save</mat-icon> SPEICHERN
   </button>
+  <ng-template #saveSpinner>
+    <mat-spinner [style.grid-area]="'save'" [color]="'accent'" [diameter]="36"></mat-spinner>
+  </ng-template>
   <button
     mat-raised-button
     type="button"
     [color]="'warn'"
     [style.grid-area]="'delete'"
-    [disabled]="!route.snapshot.paramMap.get('id')"
+    [disabled]="!event.id"
+    (click)="deleteEvent()"
   >
     <mat-icon>delete</mat-icon> LÖSCHEN
   </button>
 </form>
 
 <ng-template #loading>
-  <mat-progress-spinner></mat-progress-spinner>
+  <mat-progress-bar [color]="'accent'" [mode]="'indeterminate'"></mat-progress-bar>
 </ng-template>

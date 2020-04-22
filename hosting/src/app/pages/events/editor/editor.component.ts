@@ -1,10 +1,10 @@
 import { Component, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FormControl, Validators, FormGroup, AbstractControl, ValidatorFn } from "@angular/forms";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable, of, Subscription, combineLatest } from "rxjs";
-import { tap, map } from "rxjs/operators";
+import { tap, map, delay } from "rxjs/operators";
 
 import { appEvent, appPerson } from "src/app/utils/interfaces";
 import { EventDALService } from "src/app/services/DAL/event-dal.service";
@@ -28,8 +28,9 @@ export class EditorComponent implements OnDestroy {
   constructor(
     personDAO: PersonDalService,
     private eventDAO: EventDALService,
-    public route: ActivatedRoute,
-    private auth: AuthService
+    route: ActivatedRoute,
+    private auth: AuthService,
+    private router: Router
   ) {
     const id = route.snapshot.paramMap.get("id");
     this.$data = combineLatest([
@@ -47,7 +48,13 @@ export class EditorComponent implements OnDestroy {
         })
       ),
       (id
-        ? eventDAO.getById(id)
+        ? eventDAO.getById(id).pipe(
+            tap((event) => {
+              if (!event) {
+                router.navigate(["events", "overview"]);
+              }
+            })
+          )
         : of({
             id: "",
             ownerId: auth.$user.getValue().id,
@@ -132,8 +139,9 @@ export class EditorComponent implements OnDestroy {
   }
 
   onSubmit() {
+    this.eventForm.disable();
     const updated: appEvent = {
-      id: this.route.snapshot.paramMap.get("id"),
+      id: this.event.id,
       ownerId: this.event.ownerId,
       title: this.eventForm.get("title").value,
       description: this.eventForm.get("description").value,
@@ -146,13 +154,17 @@ export class EditorComponent implements OnDestroy {
       ),
       participants: this.eventForm.get("deadline").get("participants").value,
     };
-    const action = this.route.snapshot.paramMap.get("id") ? this.eventDAO.update(updated) : this.eventDAO.insert(updated);
-    // save and set the form back to prestine when saving was successfull
-    this.subs.push(action.subscribe({ next: () => this.eventForm.markAsPristine() }));
+    const action = this.event.id
+      ? // when saving worked the observable will fire again with the updated data and create a new form
+        // this is effectively the same as setting the form to prestine
+        this.eventDAO.update(updated)
+      : // save and go to edit event with id
+        this.eventDAO.insert(updated).pipe(tap((newId) => this.router.navigate(["events", "edit", newId])));
+    this.subs.push(action.subscribe(null, null, null));
   }
 
   deleteEvent(): void {
-    this.subs.push(this.eventDAO.delete(this.route.snapshot.paramMap.get("id")).subscribe());
+    this.subs.push(this.eventDAO.delete(this.event.id).subscribe({ next: () => this.router.navigate(["events", "overview"]) }));
   }
 
   private getDateFromDateAndTimeStrings(d: Date, time: string): Date {

@@ -1,7 +1,5 @@
 <mat-toolbar [color]="'accent'">Artikel Bearbeiten</mat-toolbar>
 <form *ngIf="$data | async as article; else loading" [formGroup]="articleForm" (ngSubmit)="onSubmit()">
-  <a [style.grid-area]="'close'" mat-icon-button [routerLink]="'/articles/overview'"><mat-icon>close</mat-icon></a>
-
   <mat-form-field [style.grid-area]="'title'">
     <mat-label>Titel</mat-label>
     <input matInput formControlName="title" />
@@ -30,6 +28,7 @@
 
   <button
     mat-raised-button
+    *ngIf="!articleForm.disabled; else saveSpinner"
     type="submit"
     [color]="'primary'"
     [style.grid-area]="'save'"
@@ -37,6 +36,10 @@
   >
     <mat-icon>save</mat-icon> SPEICHERN
   </button>
+  <ng-template #saveSpinner>
+    <mat-spinner [style.grid-area]="'save'" [color]="'accent'" [diameter]="36"></mat-spinner>
+  </ng-template>
+
   <button
     mat-raised-button
     type="button"
@@ -50,5 +53,5 @@
 </form>
 
 <ng-template #loading>
-  <mat-progress-spinner></mat-progress-spinner>
+  <mat-progress-bar [color]="'accent'" [mode]="'indeterminate'"></mat-progress-bar>
 </ng-template>
