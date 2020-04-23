@@ -13,7 +13,7 @@ import { map, tap, catchError } from "rxjs/operators";
 import * as fbs from "firebase/app";
 import "firebase/firestore";
 
-import { appArticle } from "src/app/utils/interfaces";
+import { appArticle, appElementDAL } from "src/app/utils/interfaces";
 import { AuthService } from "../auth.service";
 import { arrayToMap, mapToArray } from "src/app/utils/converters";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -29,7 +29,7 @@ interface storeableArticle {
 @Injectable({
   providedIn: "root",
 })
-export class ArticleDalService {
+export class ArticleDalService implements appElementDAL {
   constructor(private firestore: AngularFirestore, private auth: AuthService, private snackbar: MatSnackBar) {}
 
   getArticleById(id: string): Observable<appArticle | null> {
@@ -46,7 +46,26 @@ export class ArticleDalService {
       );
   }
 
-  getArticles(limit?: number): Observable<appArticle[]> {
+  getByTags(tags: string[]): Observable<appArticle[]> {
+    return this.firestore
+      .collection<storeableArticle>("articles", (qFn) => {
+        let query: CollectionReference | Query = qFn;
+        tags.forEach((tag) => {
+          query = query.where(`tags.${tag}`, "==", true);
+        });
+        return query;
+      })
+      .snapshotChanges()
+      .pipe(
+        map(convertMany),
+        catchError((err) => {
+          this.snackbar.open(`Artikel konnten nicht geladen werden: ${err}`, "OK");
+          return of([]);
+        })
+      );
+  }
+
+  getAll(limit?: number): Observable<appArticle[]> {
     return this.firestore
       .collection<storeableArticle>("articles", (qFn) => {
         let query: CollectionReference | Query = qFn;

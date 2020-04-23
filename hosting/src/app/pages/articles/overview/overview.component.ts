@@ -1,23 +1,24 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { appArticle } from "src/app/utils/interfaces";
 import { ArticleDalService } from "src/app/services/DAL/article-dal.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { SearchableComponent } from "src/app/utils/component-search-extension";
 
 @Component({
   selector: "app-overview",
   templateUrl: "./overview.component.html",
   styleUrls: ["./overview.component.scss"],
 })
-export class OverviewComponent implements OnInit {
-  searchString = "";
-  $articles: Observable<appArticle[]>;
+export class OverviewComponent extends SearchableComponent {
+  $data: Observable<appArticle[]>;
   get cols(): number {
     return Math.ceil(window.innerWidth / 500);
   }
 
-  constructor(public auth: AuthService, articleDAO: ArticleDalService) {
-    this.$articles = articleDAO.getArticles();
+  constructor(public auth: AuthService, articleDAO: ArticleDalService, route: ActivatedRoute, router: Router) {
+    super(articleDAO, router, route, "articles");
   }
 
   canCreate(): boolean {
@@ -25,8 +26,4 @@ export class OverviewComponent implements OnInit {
     // owner and admins can edit
     return user && (user.groups.includes("Autor") || user.groups.includes("admin"));
   }
-
-  runSearch() {}
-
-  ngOnInit(): void {}
 }
