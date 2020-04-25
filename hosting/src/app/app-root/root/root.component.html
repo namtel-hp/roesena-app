@@ -19,7 +19,17 @@
             Über uns
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <a mat-list-item routerLink="/groups">Gruppen</a>
+        <mat-expansion-panel mat-list-item>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Gruppen</mat-panel-title>
+          </mat-expansion-panel-header>
+          <a mat-list-item routerLink="/groups/brandjoggala">Brandjoggala</a>
+          <a mat-list-item routerLink="/groups/garden">Garden</a>
+          <a mat-list-item routerLink="/groups/maennerballett">Männerballett</a>
+          <a mat-list-item routerLink="/groups/roehling-stones">Röhling Stones</a>
+          <a mat-list-item routerLink="/groups/sechtafeger">Sechtafeger</a>
+          <a mat-list-item routerLink="/groups/wildes-heer">Das Wilde Heer</a>
+        </mat-expansion-panel>
         <a mat-list-item routerLink="/images">Bilder</a>
         <a mat-list-item routerLink="/articles">Artikel</a>
         <a mat-list-item routerLink="/archive">Archiv</a>
@@ -60,11 +70,11 @@
           <a mat-list-item routerLink="/auth/register">Registrieren</a>
         </ng-template>
       </mat-expansion-panel>
-      <div class="button-container">
-        <button aria-label="help" mat-icon-button (click)="onHelpClick()">
-          <mat-icon aria-label="help icon">help</mat-icon>
-        </button>
-        <a mat-icon-button [routerLink]="'/'" aria-label="home"><mat-icon aria-label="home icon">home</mat-icon></a>
+      <div class="link-container">
+        <a mat-button [routerLink]="'/about'" aria-label="Impressum"
+          ><mat-icon aria-label="impressum icon">info</mat-icon> IMPRESSUM</a
+        >
+        <a mat-button [routerLink]="'/'" aria-label="home"><mat-icon aria-label="home icon">home</mat-icon> STARTSEITE</a>
       </div>
     </mat-nav-list>
   </mat-sidenav>

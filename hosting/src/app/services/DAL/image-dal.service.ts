@@ -44,13 +44,16 @@ export class ImageDalService implements appElementDAL {
       );
   }
 
-  getByTags(tags: string[]): Observable<appImage[]> {
+  getByTags(tags: string[], limit?: number): Observable<appImage[]> {
     return this.firestore
       .collection<storeableImage>("images", (qFn) => {
         let query: CollectionReference | Query = qFn;
         tags.forEach((tag) => {
           query = query.where(`tags.${tag}`, "==", true);
         });
+        if (limit) {
+          query = query.limit(limit);
+        }
         return query;
       })
       .snapshotChanges()
@@ -80,12 +83,22 @@ export class ImageDalService implements appElementDAL {
   getDownloadURL(id: string): Observable<string | null> {
     return this.storage
       .ref("uploads")
-      .child(id)
+      .child(`${id}_cropped`)
       .getDownloadURL()
       .pipe(
-        catchError((err) => {
-          this.snackbar.open(`Bild URL konnte nicht geladen werden: ${err}`, "OK");
-          return of(null);
+        catchError(() => {
+          // image may not be resized yet, function could still be running
+          return this.storage
+            .ref("uploads")
+            .child(id)
+            .getDownloadURL()
+            .pipe(
+              catchError((err) => {
+                // image does not exist
+                this.snackbar.open(`Bild URL konnte nicht geladen werden: ${err}`, "OK");
+                return of(null);
+              })
+            );
         })
       );
   }

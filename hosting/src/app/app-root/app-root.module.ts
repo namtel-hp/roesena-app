@@ -8,6 +8,7 @@ import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { AngularFireFunctionsModule } from "@angular/fire/functions";
 import { AngularFireStorageModule } from "@angular/fire/storage";
 import { ServiceWorkerModule } from "@angular/service-worker";
+import { MarkdownModule } from "ngx-markdown";
 
 import { MatNativeDateModule, MAT_DATE_LOCALE } from "@angular/material/core";
 import { LayoutModule } from "@angular/cdk/layout";
@@ -24,9 +25,11 @@ import { RootComponent } from "./root/root.component";
 import { StartPageComponent } from "./start-page/start-page.component";
 import { CardsModule } from "../shared/cards/cards.module";
 import { MatBadgeModule } from "@angular/material/badge";
+import { AboutComponent } from "./about/about.component";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 @NgModule({
-  declarations: [RootComponent, StartPageComponent],
+  declarations: [RootComponent, StartPageComponent, AboutComponent, NotFoundComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -48,6 +51,7 @@ import { MatBadgeModule } from "@angular/material/badge";
     MatSnackBarModule,
     MatBadgeModule,
     CardsModule,
+    MarkdownModule.forRoot(),
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: "de" }],
   bootstrap: [RootComponent],
