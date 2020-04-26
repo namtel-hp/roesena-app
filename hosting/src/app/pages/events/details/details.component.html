@@ -2,6 +2,7 @@
   <mat-toolbar [color]="'accent'">
     <div>{{ ev.title }}</div>
     <div class="spacer"></div>
+    <a mat-icon-button [routerLink]="'/events/overview'"><mat-icon>apps</mat-icon></a>
     <a mat-icon-button *ngIf="canEdit(ev)" [routerLink]="'/events/edit/' + ev.id"><mat-icon>edit</mat-icon></a>
   </mat-toolbar>
   <mat-toolbar
@@ -12,7 +13,7 @@
     </span>
   </mat-toolbar>
   <main>
-    <p>{{ ev.description }}</p>
+    <div class="markdown-generated" [innerHTML]="ev.description | markdown"></div>
     <mat-chip-list>
       <mat-chip *ngFor="let tag of ev.tags"> {{ tag }} </mat-chip>
     </mat-chip-list>

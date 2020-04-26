@@ -1,10 +1,20 @@
-<mat-toolbar [color]="'accent'">Event Bearbeiten</mat-toolbar>
+<mat-toolbar [color]="'accent'">
+  <div>Event Bearbeiten</div>
+  <div class="spacer"></div>
+  <a mat-icon-button [routerLink]="'/events/overview'"><mat-icon>apps</mat-icon></a>
+</mat-toolbar>
 <form *ngIf="$data | async; else loading" [formGroup]="eventForm" (ngSubmit)="onSubmit()">
   <mat-form-field [style.grid-area]="'title'">
     <mat-label>Titel</mat-label>
     <input matInput formControlName="title" />
     <mat-error *ngIf="eventForm.controls.title.invalid"> {{ getErrorMessage(eventForm.controls.title) }} </mat-error>
   </mat-form-field>
+
+  <div
+    class="preview markdown-generated"
+    [style.grid-area]="'preview'"
+    [innerHTML]="eventForm.get('description').value | markdown"
+  ></div>
 
   <mat-form-field class="description" [style.grid-area]="'description'">
     <mat-label>Beschreibung</mat-label>
