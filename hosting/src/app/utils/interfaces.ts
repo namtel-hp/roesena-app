@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import { Direction } from "./enums";
 
 export interface GardeDef {
   year: number;
@@ -17,12 +18,18 @@ export interface appPerson {
 
 export interface appElementDAL {
   getByTags(tags: string[], limit?: number): Observable<appElement[]>;
-  getAll(limit?: number);
+  getAll(limit?: number): Observable<appElement[]>;
+}
+
+export interface paginatedDAL extends appElementDAL {
+  getDocCount(): Observable<number>;
+  getPage(limit: number, dir: Direction): Observable<appElement[]>;
 }
 
 export interface appElement {
   id: string;
   ownerId: string;
+  ownerName: string;
   tags: string[];
 }
 
@@ -32,7 +39,13 @@ export interface appEvent extends appElement {
   startDate: Date;
   endDate: Date;
   deadline: Date | null;
-  participants: { id: string; amount: number }[];
+  participants: Participant[];
+}
+
+export interface Participant {
+  id: string;
+  amount: number;
+  name: string;
 }
 
 export interface appImage extends appElement {

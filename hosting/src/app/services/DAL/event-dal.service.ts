@@ -10,23 +10,25 @@ import {
   QueryDocumentSnapshot,
 } from "@angular/fire/firestore";
 import { Observable, from, of, combineLatest } from "rxjs";
-import { map, catchError, tap, delay } from "rxjs/operators";
+import { map, catchError, tap, switchMap } from "rxjs/operators";
 import * as fbs from "firebase/app";
 import "firebase/firestore";
 
 import { appEvent, appElementDAL } from "src/app/utils/interfaces";
 import { AuthService } from "../auth.service";
 import { arrayToMap, participantArrayToMap, mapToArray, participantMapToArray } from "src/app/utils/converters";
+import { Direction } from "src/app/utils/enums";
 
 interface storeableEvent {
   ownerId: string;
+  ownerName: string;
   title: string;
   description: string;
   startDate: fbs.firestore.Timestamp;
   endDate: fbs.firestore.Timestamp;
   tags: { [key: string]: boolean };
   deadline: fbs.firestore.Timestamp;
-  participants: { [key: string]: number };
+  participants: { [key: string]: { amount: number; name: string } };
   participantsArray: string[];
 }
 
@@ -34,6 +36,8 @@ interface storeableEvent {
   providedIn: "root",
 })
 export class EventDALService implements appElementDAL {
+  private pageFirst: QueryDocumentSnapshot<storeableEvent>;
+  private pageLast: QueryDocumentSnapshot<storeableEvent>;
   constructor(private firestore: AngularFirestore, private snackbar: MatSnackBar, private auth: AuthService) {}
 
   getById(id: string): Observable<appEvent | null> {
@@ -48,6 +52,49 @@ export class EventDALService implements appElementDAL {
           return of(null);
         })
       );
+  }
+
+  getForMonth(year: number, month: number): Observable<appEvent[]> {
+    let results: appEvent[] = [];
+    // get the next event starting from the last returned one
+    const nextEvent = (last: QueryDocumentSnapshot<storeableEvent>) =>
+      this.firestore
+        .collection<storeableEvent>("events", (qFn) => qFn.orderBy("endDate").startAfter(last).limit(1))
+        .get()
+        .pipe(
+          map((el: any) => el.docs[0]),
+          switchMap((current) => {
+            if (current && convertSnapshot(current).startDate.getTime() <= new Date(year, month + 1, 0).getTime()) {
+              results.push(convertSnapshot(current));
+              return nextEvent(current);
+            } else {
+              return of(results);
+            }
+          }),
+          catchError((err) => {
+            this.snackbar.open(`Events konnten nicht geladen werden: ${err}`, "OK");
+            return of([]);
+          })
+        );
+    // query the first event starting from the current month
+    return this.firestore
+      .collection<storeableEvent>("events", (qFn) => qFn.where("endDate", ">=", new Date(year, month, 1)).limit(1))
+      .get()
+      .pipe(
+        map((el: any) => el.docs[0]),
+        switchMap((current) => {
+          if (current && convertSnapshot(current).startDate.getTime() <= new Date(year, month + 1, 0).getTime()) {
+            results.push(convertSnapshot(current));
+            return nextEvent(current);
+          } else {
+            return of(results);
+          }
+        }),
+        catchError((err) => {
+          this.snackbar.open(`Events konnten nicht geladen werden: ${err}`, "OK");
+          return of([]);
+        })
+      ) as Observable<appEvent[]>;
   }
 
   getByTags(tags: string[]): Observable<appEvent[]> {
@@ -90,6 +137,41 @@ export class EventDALService implements appElementDAL {
         return of([]);
       })
     );
+  }
+
+  getPage(limit: number, dir: Direction, cutoffDate: Date = new Date()): Observable<appEvent[]> {
+    return this.firestore
+      .collection<storeableEvent>("articles", (qFn) => {
+        let query: CollectionReference | Query = qFn;
+        // always order by creation date
+        query = query.orderBy("created", "desc");
+        // paginate the data
+        switch (dir) {
+          case Direction.initial:
+            query = query.limit(limit);
+            break;
+          case Direction.forward:
+            query = query.startAfter(this.pageLast).limit(limit);
+            break;
+          case Direction.back:
+            query = query.endBefore(this.pageFirst).limitToLast(limit);
+            break;
+        }
+        return query;
+      })
+      .snapshotChanges()
+      .pipe(
+        tap((el) => {
+          if (el.length === 0) throw new Error("empty result");
+          this.pageFirst = el[0].payload.doc;
+          this.pageLast = el[el.length - 1].payload.doc;
+        }),
+        map(convertMany),
+        catchError((err) => {
+          this.snackbar.open(`Fehler beim laden von Artikeln: ${err}`, "OK");
+          return of([]);
+        })
+      );
   }
 
   getAll(limit: number = undefined, cutoffDate: Date = new Date()): Observable<appEvent[]> {
@@ -208,11 +290,12 @@ export class EventDALService implements appElementDAL {
 }
 
 function toStorableEvent(app: appEvent): storeableEvent {
-  const { title, description, ownerId } = app;
+  const { title, description, ownerId, ownerName } = app;
   return {
     title,
     description,
     ownerId,
+    ownerName,
     startDate: fbs.firestore.Timestamp.fromDate(app.startDate),
     endDate: fbs.firestore.Timestamp.fromDate(app.endDate),
     tags: arrayToMap(app.tags),
@@ -236,11 +319,12 @@ function convertMany(action: DocumentChangeAction<storeableEvent>[]): appEvent[]
 
 function convertSnapshot(snapshot: DocumentSnapshot<storeableEvent> | QueryDocumentSnapshot<storeableEvent>): appEvent | null {
   if (!snapshot.data()) return null;
-  const { title, description, ownerId } = snapshot.data();
+  const { title, description, ownerId, ownerName } = snapshot.data();
   return {
     title,
     description,
     ownerId,
+    ownerName,
     id: snapshot.id,
     startDate: new Date(snapshot.data().startDate.toDate()),
     endDate: new Date(snapshot.data().endDate.toDate()),
