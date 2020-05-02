@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { Observable } from "rxjs";
 
-import { ArticleDalService } from "src/app/services/DAL/article-dal.service";
 import { AuthService } from "src/app/services/auth.service";
-import { appArticle } from "src/app/utils/interfaces";
+import { appArticle, appImage } from "src/app/utils/interfaces";
 import { Details } from "src/app/utils/ui-abstractions";
+import { ImageDalService } from "src/app/services/DAL/image-dal.service";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: "app-detail",
@@ -13,9 +14,16 @@ import { Details } from "src/app/utils/ui-abstractions";
   styleUrls: ["./details.component.scss"],
 })
 export class DetailsComponent extends Details {
-  $data: Observable<appArticle>;
+  article: appArticle;
+  $image: Observable<appImage>;
 
-  constructor(route: ActivatedRoute, articleDAO: ArticleDalService, router: Router, auth: AuthService) {
-    super("articles", route, router, articleDAO, auth);
+  constructor(imageDAO: ImageDalService, auth: AuthService, route: ActivatedRoute) {
+    super(auth);
+    this.article = route.snapshot.data.article;
+    this.$image = imageDAO.getBySearchStrings(this.article.tags, 1).pipe(map((imgs) => imgs[0]));
+  }
+
+  getLinkToImages(val: appArticle): string {
+    return `/images/overview/${val.tags.join(",")}`;
   }
 }
