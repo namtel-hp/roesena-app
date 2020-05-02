@@ -35,7 +35,7 @@ export class ArticleDalService implements paginatedDAL {
   private pageLast: QueryDocumentSnapshot<storeableArticle>;
   constructor(private firestore: AngularFirestore, private snackbar: MatSnackBar) {}
 
-  getArticleById(id: string): Observable<appArticle | null> {
+  getById(id: string): Observable<appArticle | null> {
     return this.firestore
       .collection<storeableArticle>("articles")
       .doc<storeableArticle>(id)
@@ -49,7 +49,7 @@ export class ArticleDalService implements paginatedDAL {
       );
   }
 
-  getByTags(tags: string[], limit?: number): Observable<appArticle[]> {
+  getBySearchStrings(tags: string[], limit?: number): Observable<appArticle[]> {
     // if there is no limit set one
     if (!limit) {
       limit = 15;

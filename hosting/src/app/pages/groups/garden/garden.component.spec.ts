@@ -1,16 +1,19 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from "@angular/router/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatTabsModule } from "@angular/material/tabs";
 
-import { GardenComponent } from './garden.component';
+import { GardenComponent } from "./garden.component";
+import { testingRoutes } from "src/app/testing";
 
-describe('GardenComponent', () => {
+describe("GardenComponent", () => {
   let component: GardenComponent;
   let fixture: ComponentFixture<GardenComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GardenComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule.withRoutes(testingRoutes), MatTabsModule],
+      declarations: [GardenComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +22,7 @@ describe('GardenComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

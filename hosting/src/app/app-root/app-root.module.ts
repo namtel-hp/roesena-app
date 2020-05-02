@@ -19,12 +19,13 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatBadgeModule } from "@angular/material/badge";
 
 import { AppRootRoutingModule } from "./app-root-routing.module";
 import { RootComponent } from "./root/root.component";
 import { StartPageComponent } from "./start-page/start-page.component";
 import { CardsModule } from "../shared/cards/cards.module";
-import { MatBadgeModule } from "@angular/material/badge";
 import { AboutComponent } from "./about/about.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 
@@ -50,6 +51,7 @@ import { NotFoundComponent } from "./not-found/not-found.component";
     MatNativeDateModule,
     MatSnackBarModule,
     MatBadgeModule,
+    MatProgressBarModule,
     CardsModule,
     MarkdownModule.forRoot(),
   ],

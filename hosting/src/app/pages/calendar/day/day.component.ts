@@ -1,6 +1,6 @@
 import { Component, Input, ElementRef } from "@angular/core";
 import { appEvent } from "src/app/utils/interfaces";
-import { expandCollapseAnimation } from "./expand-collapse.animation";
+import { expandCollapseAnimation } from "src/app/utils/animations";
 
 @Component({
   selector: "app-day",
@@ -16,6 +16,9 @@ export class DayComponent {
   isPopupVisible = false;
 
   get params(): any {
+    if (!this.calendarCardRef.nativeElement || !document.getElementById("calendar")) {
+      return {};
+    }
     return {
       height: this.calendarCardRef.nativeElement.clientHeight - 12 + "px",
       width: this.calendarCardRef.nativeElement.clientWidth - 12 + "px",

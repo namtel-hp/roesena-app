@@ -1,4 +1,4 @@
-import { Router } from "@angular/router";
+import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { Observable } from "rxjs";
@@ -21,22 +21,46 @@ export class RootComponent implements OnInit {
     shareReplay()
   );
   $badgeContentStream: Observable<number>;
+  isLoading = false;
   version: string;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,
     public auth: AuthService,
-    eventDAO: EventDALService,
+    private eventDAO: EventDALService,
     private snackbar: MatSnackBar,
     private swUpdate: SwUpdate
   ) {
+    this.router.events.subscribe((event) => {
+      switch (true) {
+        case event instanceof NavigationStart:
+          this.isLoading = true;
+          break;
+        case event instanceof NavigationEnd:
+        case event instanceof NavigationCancel:
+        case event instanceof NavigationError:
+          this.isLoading = false;
+          break;
+      }
+    });
+  }
+
+  ngOnInit() {
     this.version = environment.buildVersion;
-    this.$badgeContentStream = auth.$user.pipe(
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.available.subscribe(() => {
+        this.snackbar
+          .open("Ein Update für die App ist bereit", "UPDATE")
+          .onAction()
+          .subscribe(() => location.reload());
+      });
+    }
+    this.$badgeContentStream = this.auth.$user.pipe(
       // listen to user updates and only trigger on new users
       filter((val) => !!val),
       // then request events
-      switchMap(() => eventDAO.getRespondables()),
+      switchMap(() => this.eventDAO.getRespondables()),
       // filter out events that are already responded
       map((vals) => {
         const id = this.auth.$user.getValue().id;
@@ -45,29 +69,13 @@ export class RootComponent implements OnInit {
       // only keep the amount of events
       map((vals) => (vals.length > 0 ? vals.length : null)),
       tap((unresponded) => {
-        if (unresponded) {
-          snackbar
+        if (unresponded !== null) {
+          this.snackbar
             .open(`Unbeantwortete Termine: ${unresponded}`, "ANTWORTEN")
             .onAction()
             .subscribe({ next: () => this.router.navigate(["auth", "my-events"]) });
         }
       })
     );
-  }
-
-  ngOnInit() {
-    if (this.swUpdate.isEnabled) {
-      this.swUpdate.available.subscribe(() => {
-        this.snackbar
-          .open("Ein update für die App ist bereit", "UPDATE")
-          .onAction()
-          .subscribe(() => location.reload());
-      });
-    }
-  }
-
-  onHelpClick() {
-    // navigate to the current route and add the 'help' prefix
-    this.router.navigate([`/help${this.router.url}`]);
   }
 }

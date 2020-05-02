@@ -1,16 +1,19 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { MarkdownPreviewComponent } from './markdown-preview.component';
+import { MarkdownPreviewComponent } from "./markdown-preview.component";
+import { MarkdownViewerStub } from "src/app/testing";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 
-describe('MarkdownPreviewComponent', () => {
+describe("MarkdownPreviewComponent", () => {
   let component: MarkdownPreviewComponent;
   let fixture: ComponentFixture<MarkdownPreviewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MarkdownPreviewComponent ]
-    })
-    .compileComponents();
+      imports: [MatButtonModule, MatIconModule],
+      declarations: [MarkdownPreviewComponent, MarkdownViewerStub],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +22,7 @@ describe('MarkdownPreviewComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

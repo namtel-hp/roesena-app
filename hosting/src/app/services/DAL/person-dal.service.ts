@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, ChangeDetectorRef, NgZone } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AngularFireFunctions } from "@angular/fire/functions";
 import {
@@ -14,7 +14,7 @@ import { Observable, of, from, BehaviorSubject, Subject, combineLatest } from "r
 import { map, tap, catchError } from "rxjs/operators";
 import "firebase/firestore";
 
-import { appPerson } from "src/app/utils/interfaces";
+import { appPerson, paginatedDAL } from "src/app/utils/interfaces";
 import { mapToArray, arrayToMap } from "src/app/utils/converters";
 import { Direction } from "src/app/utils/enums";
 
@@ -27,12 +27,17 @@ interface storeablePerson {
 @Injectable({
   providedIn: "root",
 })
-export class PersonDalService {
+export class PersonDalService implements paginatedDAL {
   private pageFirst: QueryDocumentSnapshot<storeablePerson>;
   private pageLast: QueryDocumentSnapshot<storeablePerson>;
-  constructor(private firestore: AngularFirestore, private fns: AngularFireFunctions, private snackbar: MatSnackBar) {}
+  constructor(
+    private firestore: AngularFirestore,
+    private fns: AngularFireFunctions,
+    private snackbar: MatSnackBar,
+    private ngZone: NgZone
+  ) {}
 
-  getPersonById(id: string): Observable<appPerson | null> {
+  getById(id: string): Observable<appPerson | null> {
     return this.firestore
       .collection<storeablePerson>("persons")
       .doc<storeablePerson>(id)
@@ -46,12 +51,31 @@ export class PersonDalService {
       );
   }
 
-  getAll(onlyConfirmed?: boolean): Observable<appPerson[]> {
+  getAll(): Observable<appPerson[]> {
+    return this.firestore
+      .collection<storeablePerson>("persons")
+      .snapshotChanges()
+      .pipe(
+        map(convertMany),
+        catchError((err) => {
+          this.snackbar.open(`Fehler beim laden von Personen: ${err}`, "OK");
+          return of([]);
+        })
+      );
+  }
+
+  getBySearchStrings(searchStrings: string[], limit?: number, onlyConfirmed?: boolean): Observable<appPerson[]> {
     return this.firestore
       .collection<storeablePerson>("persons", (qFn) => {
         let query: CollectionReference | Query = qFn;
-        if (onlyConfirmed === true) {
+        searchStrings.forEach((s) => {
+          query = query.where("name", "==", s);
+        });
+        if (onlyConfirmed && onlyConfirmed === true) {
           query = query.where("isConfirmedMember", "==", true);
+        }
+        if (limit) {
+          query = query.limit(limit);
         }
         return query;
       })
@@ -65,7 +89,7 @@ export class PersonDalService {
       );
   }
 
-  getPersonAmount(): Observable<number> {
+  getDocCount(): Observable<number> {
     return this.firestore
       .collection("meta")
       .doc("persons")
@@ -129,7 +153,12 @@ export class PersonDalService {
       .pipe(
         map(() => true),
         tap(() => {
-          this.snackbar.open("Gespeichert!", "OK", { duration: 2000 });
+          // this callback is outside of the angular zone, because of that the ngZone stuff is needed to align the snackbar correctly
+          this.ngZone.run(() => {
+            setTimeout(() => {
+              this.snackbar.open("Gespeichert!", "OK", { duration: 2000 });
+            }, 0);
+          });
         }),
         catchError((err) => {
           this.snackbar.open(`Fehler beim Speichern der Anzahl, wahrscheinlich ist die Deadline vorbei: ${err}`, "OK");
