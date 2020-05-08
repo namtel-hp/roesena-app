@@ -1,19 +1,20 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 
-import { appEvent } from "../../../utils/interfaces";
-import { AuthService } from "src/app/services/auth.service";
-import { Card } from "src/app/utils/ui-abstractions";
+import { AppEvent } from '../../../utils/interfaces';
+import { AuthService } from 'src/app/services/auth.service';
+import { Card } from 'src/app/utils/ui-abstractions';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-event-card",
-  templateUrl: "./event-card.component.html",
-  styleUrls: ["./event-card.component.scss"],
+  selector: 'app-event-card',
+  templateUrl: './event-card.component.html',
+  styleUrls: ['./event-card.component.scss'],
 })
 export class EventCardComponent extends Card {
   @Input()
-  public data: appEvent;
+  public data: AppEvent;
 
-  constructor(auth: AuthService) {
-    super(auth);
+  constructor(auth: AuthService, router: Router) {
+    super(auth, router, 'events');
   }
 }

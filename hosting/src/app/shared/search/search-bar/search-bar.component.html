@@ -1,0 +1,32 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let item of searchForm.get('searchStrings').value"
+        (removed)="chips.removeItem(item, searchForm.get('searchStrings'))"
+      >
+        {{ item }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        #chipInput
+        placeholder="Suchbegriffe"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="chips.addItem($event, searchForm.get('searchStrings'))"
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addItemByAutocomplete($event)">
+        <mat-option
+          *ngFor="let option of autocomplete.$existingTags | async | autocompleteFilter: chipInput.value"
+          [value]="option"
+        >
+          {{ option }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-chip-list>
+  </mat-form-field>
+  <button mat-icon-button aria-label="search">
+    <mat-icon>search</mat-icon>
+  </button>
+</form>
