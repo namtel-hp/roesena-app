@@ -1,6 +1,8 @@
-import { Component, Input, ElementRef } from '@angular/core';
+import { Component, Input, ElementRef, HostBinding } from '@angular/core';
+
 import { AppEvent } from 'src/app/utils/interfaces';
 import { expandCollapseAnimation } from 'src/app/utils/animations';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-day',
@@ -11,9 +13,41 @@ import { expandCollapseAnimation } from 'src/app/utils/animations';
 export class DayComponent {
   @Input()
   day: number;
-  @Input()
-  events: AppEvent[];
+  @Input('events')
+  set _events(ev: AppEvent[]) {
+    this.events = ev;
+    const user = this.auth.$user.getValue();
+    this.eventTableData = this.events.map((evIter) => {
+      const res = { name: evIter.title, status: 'öffentlich', id: evIter.id, hasUnseenChanges: false };
+      if (evIter.participants.length > 0) {
+        const p = evIter.participants.find((part) => part.id === user.id);
+        if (p.hasUnseenChanges) {
+          res.hasUnseenChanges = true;
+        }
+        switch (p.amount) {
+          case -1:
+            res.status = 'Rückmeldung ausstehend';
+            break;
+          case 0:
+            res.status = 'abgelehnt';
+            break;
+          default:
+            res.status = `angenommen mit ${p.amount} Personen`;
+            break;
+        }
+      }
+      return res;
+    });
+  }
+  events: AppEvent[] = [];
   isPopupVisible = false;
+
+  @HostBinding('class.inactive') get isInactive(): boolean {
+    return !this.events || this.events.length === 0;
+  }
+
+  displayedColumns = ['name', 'status'];
+  eventTableData: { name: string; status: string; id: string; hasUnseenChanges: boolean }[] = [];
 
   get params(): any {
     if (!this.calendarCardRef.nativeElement || !document.getElementById('calendar')) {
@@ -43,7 +77,7 @@ export class DayComponent {
     };
   }
 
-  constructor(private calendarCardRef: ElementRef<HTMLElement>) {}
+  constructor(private calendarCardRef: ElementRef<HTMLElement>, public auth: AuthService) {}
 
   onCardClick() {
     if (!this.isPopupVisible) {

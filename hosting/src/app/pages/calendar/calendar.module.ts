@@ -9,9 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   declarations: [CalendarComponent, DayComponent],
@@ -23,9 +23,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatIconModule,
     MatGridListModule,
     MatCardModule,
-    MatBadgeModule,
-    MatListModule,
     MatProgressBarModule,
+    MatTableModule,
+    MatBadgeModule,
   ],
 })
 export class CalendarModule {}
