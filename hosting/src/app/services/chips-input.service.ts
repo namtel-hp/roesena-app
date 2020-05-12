@@ -21,8 +21,7 @@ export class ChipsInputService {
     const value = event.value.trim();
     // only add if no autocomplete is provided or nothing is selected
     if (!autocomplete || (autocomplete && !autocomplete.isOpen)) {
-      if (value !== '' && !form.value.includes(value)) {
-        // debugger;
+      if (new RegExp('^[0-9a-zA-ZäöüÄÖÜß -]+$').test(value) && !form.value.includes(value)) {
         (form.value as string[]).push(value);
         form.markAsDirty();
       }
