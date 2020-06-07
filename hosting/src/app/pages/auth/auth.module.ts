@@ -18,17 +18,22 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
-import { MyEventsComponent } from './my-events/my-events.component';
+// import { MyEventsComponent } from './my-events/my-events.component';
 import { ResetComponent } from './reset/reset.component';
-import { GroupManagerComponent } from './group-manager/group-manager.component';
+// import { GroupManagerComponent } from './group-manager/group-manager.component';
 import { ConvertersModule } from 'src/app/shared/converters/converters.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
+import * as fromAuth from '@state/auth/reducers/auth.reducer';
+import { AuthEffects } from '@state/auth/effects/auth.effects';
 
 @NgModule({
-  declarations: [LoginComponent, ProfileComponent, RegisterComponent, MyEventsComponent, ResetComponent, GroupManagerComponent],
+  declarations: [LoginComponent, ProfileComponent, RegisterComponent, ResetComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -50,6 +55,8 @@ import { MatCardModule } from '@angular/material/card';
     MatGridListModule,
     ConvertersModule,
     MatCardModule,
+    StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
+    EffectsModule.forFeature([AuthEffects]),
   ],
 })
 export class AuthModule {}

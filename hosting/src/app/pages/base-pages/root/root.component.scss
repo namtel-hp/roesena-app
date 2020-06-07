@@ -1,0 +1,52 @@
+@import '~@angular/material/theming';
+@include mat-core();
+$background: mat-palette($mat-grey);
+
+.sidenav-container {
+  height: calc(100% - 64px);
+}
+
+@media screen and (max-width: 599px) {
+  .sidenav-container {
+    height: calc(100% - 56px);
+  }
+}
+
+.logo {
+  mat-icon,
+  ::ng-deep mat-icon > * {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+}
+
+.home {
+  font-size: 20px;
+}
+
+.sidenav {
+  width: 240px;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.mat-sidenav-content {
+  display: relative;
+
+  .loading {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+}
+
+.version {
+  padding-left: 16px;
+  color: mat-color($background, 500);
+}

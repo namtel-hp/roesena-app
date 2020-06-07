@@ -1,17 +1,19 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ElementRef, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { PageEvent } from '@angular/material/paginator';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 
-import { PersonDalService } from 'src/app/services/DAL/person-dal.service';
 import { AppPerson } from 'src/app/utils/interfaces';
-import { PaginatedOverview } from 'src/app/utils/ui-abstractions';
-import { AuthService } from 'src/app/services/auth.service';
-import { ChipsInputService } from 'src/app/services/chips-input.service';
+import { Store } from '@ngrx/store';
+import { State } from '@state/auth/group-manager/reducers/person.reducer';
+import { SubscriptionService } from '@services/subscription.service';
+import { LoadPersons, PersonActionTypes, UpdatePerson, PersonActions } from '@state/auth/group-manager/actions/person.actions';
+import { ChipsInputService } from '@services/chips-input.service';
+import { Actions, ofType } from '@ngrx/effects';
 
 interface AppPersonWithForm extends AppPerson {
   form: FormGroup;
@@ -22,67 +24,63 @@ interface AppPersonWithForm extends AppPerson {
   templateUrl: './group-manager.component.html',
   styleUrls: ['./group-manager.component.scss'],
 })
-export class GroupManagerComponent extends PaginatedOverview implements OnDestroy {
-  $data: Observable<AppPerson[]>;
-  $withForm: Observable<AppPersonWithForm[]>;
+export class GroupManagerComponent implements OnInit, OnDestroy {
+  $length = this.store.select('person', 'length');
+  $withForm: Observable<AppPersonWithForm[]> = this.store.select('person', 'persons').pipe(
+    map((persons) => {
+      persons = persons.map((person) => ({
+        ...person,
+        form: new FormGroup({
+          groups: new FormControl(person.groups),
+          confirmed: new FormControl(person.isConfirmedMember),
+        }),
+      }));
+      return persons as AppPersonWithForm[];
+    })
+  );
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  private subs: Subscription[] = [];
+
   get cols(): number {
     return Math.ceil(window.innerWidth / 700);
   }
+  get limit(): number {
+    return this.cols * 5;
+  }
 
   constructor(
-    private personsDAO: PersonDalService,
-    router: Router,
-    route: ActivatedRoute,
-    auth: AuthService,
+    private store: Store<State>,
+    private actions$: Actions<PersonActions>,
+    private subs: SubscriptionService,
     public chips: ChipsInputService
-  ) {
-    super(['auth', 'group-manager'], personsDAO, route, router, auth);
+  ) {}
+
+  ngOnInit() {
+    this.store.dispatch(new LoadPersons({ limit: this.limit }));
   }
 
-  updateDataStream() {
-    // first let the base classes request the data
-    super.updateDataStream();
-    // and then add the form to it
-    this.updateForm();
-  }
-
-  private updateForm() {
-    this.$withForm = this.$data.pipe(
-      map((persons) => {
-        persons = persons.map((person) => ({
-          ...person,
-          form: new FormGroup({
-            groups: new FormControl(person.groups),
-            confirmed: new FormControl(person.isConfirmedMember),
-          }),
-        }));
-        return persons as AppPersonWithForm[];
-      })
-    );
-  }
-
-  onPage(ev: PageEvent) {
-    // let the super class do the update stuff
-    super.onPage(ev);
-    if (ev.pageIndex !== ev.previousPageIndex) {
-      // and update the observable if needed
-      this.updateForm();
-    }
-  }
-
-  onSubmit(id: string, isConfirmedMember: boolean, groups: string[], name: string, form: FormGroup) {
-    form.disable();
-    this.personsDAO.update({ id, isConfirmedMember, groups, name }).subscribe({
-      next: () => {
-        form.markAsPristine();
-        form.enable();
-      },
-    });
+  onSubmit(result: AppPersonWithForm) {
+    const person: AppPerson = {
+      groups: result.form.get('groups').value,
+      isConfirmedMember: result.form.get('confirmed').value,
+      id: result.id,
+      name: result.name,
+    };
+    this.store.dispatch(new UpdatePerson({ person }));
+    result.form.disable();
+    this.actions$
+      .pipe(
+        ofType(PersonActionTypes.UpdatePersonSuccess, PersonActionTypes.UpdatePersonFailure),
+        takeUntil(this.subs.unsubscribe$)
+      )
+      .subscribe({
+        next: () => {
+          result.form.markAsPristine();
+          result.form.enable();
+        },
+      });
   }
 
   ngOnDestroy() {
-    this.subs.forEach((sub) => sub.unsubscribe());
+    this.subs.unsubscribeComponent$.next();
   }
 }

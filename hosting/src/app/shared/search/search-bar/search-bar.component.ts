@@ -1,9 +1,21 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
-import { FormGroup, FormControl } from '@angular/forms';
-
-import { ChipsInputService } from 'src/app/services/chips-input.service';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { AutocompleteService } from 'src/app/services/autocomplete.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+  AddSearchString,
+  RemoveSearchString,
+  RunSearch,
+  SearchActionTypes,
+  InitSearch,
+  ChangeDataType,
+} from '@state/searching/actions/search.actions';
+import { State } from '@state/state.module';
+import { Actions, ofType } from '@ngrx/effects';
+import { MatRadioChange } from '@angular/material/radio';
 
 @Component({
   selector: 'app-search-bar',
@@ -11,27 +23,68 @@ import { AutocompleteService } from 'src/app/services/autocomplete.service';
   styleUrls: ['./search-bar.component.scss'],
 })
 export class SearchBarComponent {
-  @Input()
-  set searchStrings(s: string[]) {
-    this.searchForm = new FormGroup({
-      searchStrings: new FormControl(s),
+  isOpen = false;
+  constructor(private bottomSheet: MatBottomSheet, actions$: Actions, private store: Store<State>) {
+    actions$.pipe(ofType(SearchActionTypes.AddSearchString, SearchActionTypes.RemoveSearchString)).subscribe({
+      next: () => {
+        if (!this.isOpen) {
+          this.bottomSheet.open(SearchSheet);
+          this.isOpen = true;
+        }
+      },
     });
   }
-  get searchStrings(): string[] {
-    return this.searchForm.get('searchStrings').value;
+
+  toggleSheet() {
+    if (this.isOpen) {
+      this.bottomSheet.dismiss();
+    } else {
+      this.bottomSheet.open(SearchSheet);
+    }
+    this.isOpen = !this.isOpen;
   }
-  @Output()
-  search = new EventEmitter<string[]>();
+}
+
+@Component({
+  selector: 'search-sheet',
+  templateUrl: 'search-sheet.html',
+  styleUrls: ['./search-sheet.scss'],
+})
+export class SearchSheet {
+  searchStrings$: Observable<string[]> = this.store.select('search', 'searchStrings');
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   isHelpVisible = false;
+  options = ['Events', 'Artikel', 'Bilder'];
+  selectedOption: string = 'Events';
+  constructor(private store: Store<State>, public autocomplete: AutocompleteService) {}
 
-  searchForm: FormGroup = new FormGroup({
-    searchStrings: new FormControl(),
-  });
+  onAddTag(event: MatAutocompleteSelectedEvent, input: HTMLInputElement) {
+    input.value = '';
+    this.store.dispatch(new AddSearchString({ searchString: event.option.value }));
+  }
 
-  constructor(public chips: ChipsInputService, public autocomplete: AutocompleteService) {}
+  onRemoveTag(searchString: string) {
+    this.store.dispatch(new RemoveSearchString({ searchString }));
+  }
 
-  onSubmit() {
-    this.search.emit(this.searchForm.get('searchStrings').value);
+  onRadioChange(event: MatRadioChange) {
+    this.selectedOption = event.value;
+    let dataType: string;
+    switch (this.selectedOption) {
+      case 'Events':
+        dataType = 'events';
+        break;
+      case 'Artikel':
+        dataType = 'articles';
+        break;
+      case 'Bilder':
+        dataType = 'images';
+        break;
+    }
+    this.store.dispatch(new ChangeDataType({ dataType }));
+  }
+
+  onSearch() {
+    this.store.dispatch(new RunSearch());
   }
 }

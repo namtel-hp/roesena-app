@@ -1,0 +1,38 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { cardFlyIn } from '@utils/animations';
+import { AppImage } from '@utils/interfaces';
+import { Store } from '@ngrx/store';
+import { State } from '@state/images/overview/reducers/image.reducer';
+import { SubscriptionService } from '@services/subscription.service';
+import { LoadImages } from '@state/images/overview/actions/image.actions';
+import { map } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.scss'],
+  animations: [cardFlyIn],
+})
+export class OverviewComponent implements OnInit, OnDestroy {
+  data$: Observable<AppImage[]> = this.store.select('imageOverview', 'images');
+  length$: Observable<number> = this.store.select('imageOverview', 'length');
+  canEdit$: Observable<boolean> = this.store.select('user').pipe(map((state) => state.isAuthor || state.isAdmin));
+  get cols(): number {
+    return Math.ceil(window.innerWidth / 700);
+  }
+  get limit(): number {
+    return this.cols * 5;
+  }
+
+  constructor(private store: Store<State>, private subs: SubscriptionService) {}
+
+  ngOnInit() {
+    this.store.dispatch(new LoadImages({ limit: this.limit }));
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribeComponent$.next();
+  }
+}

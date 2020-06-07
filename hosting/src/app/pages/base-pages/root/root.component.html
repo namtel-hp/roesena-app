@@ -1,0 +1,62 @@
+<mat-toolbar color="primary">
+  <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <a class="logo" routerLink="/" mat-icon-button><mat-icon svgIcon="rsn"></mat-icon></a>
+  <a class="home" mat-button routerLink="/" *ngIf="!(isHandset$ | async)">RöSeNa</a>
+  <div class="spacer"></div>
+  <app-search-bar></app-search-bar>
+</mat-toolbar>
+<mat-sidenav-container class="sidenav-container" (swipeleft)="closeNav()">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+  >
+    <mat-nav-list>
+      <a mat-list-item routerLink="/events">Events</a>
+      <a mat-list-item routerLink="/articles">Artikel</a>
+      <a mat-list-item routerLink="/images">Bilder</a>
+      <a mat-list-item routerLink="/calendar">Kalender</a>
+
+      <mat-expansion-panel mat-list-item>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Gruppen</mat-panel-title>
+        </mat-expansion-panel-header>
+        <a mat-list-item routerLink="/groups/brandjoggala">Brandjoggala</a>
+        <a mat-list-item routerLink="/groups/garden">Garden</a>
+        <a mat-list-item routerLink="/groups/maennerballett">Männerballett</a>
+        <a mat-list-item routerLink="/groups/roehling-stones">Röhling Stones</a>
+        <a mat-list-item routerLink="/groups/sechtafeger">Sechtafeger</a>
+        <a mat-list-item routerLink="/groups/wildes-heer">Das Wilde Heer</a>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Account
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngIf="user$ | async as user; else authenticate">
+          <a mat-list-item routerLink="/auth/profile">Profil</a>
+          <a mat-list-item *ngIf="user.isConfirmedMember" [matBadge]="badgeContentStream$ | async" routerLink="/auth/my-events"
+            >Meine Events</a
+          >
+          <a mat-list-item *ngIf="user.groups.includes('admin')" routerLink="/auth/group-manager">Gruppen Manager</a>
+        </ng-container>
+        <ng-template #authenticate>
+          <a mat-list-item routerLink="/auth/login">Login</a>
+          <a mat-list-item routerLink="/auth/register">Registrieren</a>
+        </ng-template>
+      </mat-expansion-panel>
+      <a mat-list-item [routerLink]="'/help'" aria-label="Impressum">Hilfe</a>
+      <a mat-list-item [routerLink]="'/about'" aria-label="Impressum">Impressum</a>
+      <div mat-list-item class="version">{{ version }}</div>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
