@@ -20,3 +20,10 @@ testem.log
 
 # firebase stuff
 .firebase
+/*.log
+
+# emulator exports
+/export
+
+# admin sdk key to connect emulators to auth api
+/key.json

@@ -7,22 +7,71 @@ export enum PersonActionTypes {
   LoadPersonsFailure = '[Person] Load Persons Failure',
   LoadPersonLengthSuccess = '[Person] Load Person length success',
   LoadPersonLengthFailure = '[Person] Load Person length failure',
-  UpdatePerson = '[Person] update Persons',
-  UpdatePersonSuccess = '[Person] update Person Success',
-  UpdatePersonFailure = '[Person] update Person Failure',
+  ConfirmPerson = '[Person] confirm person',
+  ConfirmPersonSuccess = '[Person] confirm person success',
+  ConfirmPersonFailure = '[Person] confirm person failure',
+  DeletePerson = '[Person] delete person',
+  DeletePersonSuccess = '[Person] delete person success',
+  DeletePersonFailure = '[Person] delete person failure',
+  AddGroup = '[Person] add group to person',
+  AddGroupSuccess = '[Person] add group to person success',
+  AddGroupFailure = '[Person] add group to person failure',
+  RemoveGroup = '[Person] remove group from person',
+  RemoveGroupSuccess = '[Person] remove group from person success',
+  RemoveGroupFailure = '[Person] remove group from person failure',
+}
+export class AddGroup implements Action {
+  readonly type = PersonActionTypes.AddGroup;
+  constructor(public payload: { id: string; group: string }) {}
 }
 
-export class UpdatePerson implements Action {
-  readonly type = PersonActionTypes.UpdatePerson;
-  constructor(public payload: { person: AppPerson }) {}
+export class AddGroupSuccess implements Action {
+  readonly type = PersonActionTypes.AddGroupSuccess;
 }
 
-export class UpdatePersonSuccess implements Action {
-  readonly type = PersonActionTypes.UpdatePersonSuccess;
+export class AddGroupFailure implements Action {
+  readonly type = PersonActionTypes.AddGroupFailure;
+  constructor(public payload: { error: any }) {}
+}
+export class RemoveGroup implements Action {
+  readonly type = PersonActionTypes.RemoveGroup;
+  constructor(public payload: { id: string; group: string }) {}
 }
 
-export class UpdatePersonFailure implements Action {
-  readonly type = PersonActionTypes.UpdatePersonFailure;
+export class RemoveGroupSuccess implements Action {
+  readonly type = PersonActionTypes.RemoveGroupSuccess;
+}
+
+export class RemoveGroupFailure implements Action {
+  readonly type = PersonActionTypes.RemoveGroupFailure;
+  constructor(public payload: { error: any }) {}
+}
+
+export class DeletePerson implements Action {
+  readonly type = PersonActionTypes.DeletePerson;
+  constructor(public payload: { id: string }) {}
+}
+
+export class DeletePersonSuccess implements Action {
+  readonly type = PersonActionTypes.DeletePersonSuccess;
+}
+
+export class DeletePersonFailure implements Action {
+  readonly type = PersonActionTypes.DeletePersonFailure;
+  constructor(public payload: { error: any }) {}
+}
+
+export class ConfirmPerson implements Action {
+  readonly type = PersonActionTypes.ConfirmPerson;
+  constructor(public payload: { id: string }) {}
+}
+
+export class ConfirmPersonSuccess implements Action {
+  readonly type = PersonActionTypes.ConfirmPersonSuccess;
+}
+
+export class ConfirmPersonFailure implements Action {
+  readonly type = PersonActionTypes.ConfirmPersonFailure;
   constructor(public payload: { error: any }) {}
 }
 
@@ -57,6 +106,15 @@ export type PersonActions =
   | LoadPersonsFailure
   | LoadPersonLengthSuccess
   | LoadPersonLengthFailure
-  | UpdatePerson
-  | UpdatePersonSuccess
-  | UpdatePersonFailure;
+  | ConfirmPerson
+  | ConfirmPersonSuccess
+  | ConfirmPersonFailure
+  | DeletePerson
+  | DeletePersonSuccess
+  | DeletePersonFailure
+  | AddGroup
+  | AddGroupSuccess
+  | AddGroupFailure
+  | RemoveGroup
+  | RemoveGroupSuccess
+  | RemoveGroupFailure;
