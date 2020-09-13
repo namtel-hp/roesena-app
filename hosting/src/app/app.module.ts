@@ -41,13 +41,13 @@ import { CommonModule } from '@angular/common';
       provide: SETTINGS,
       useValue: environment.useEmulator
         ? {
-            host: 'localhost:8080',
-            ssl: false,
-          }
+          host: '127.0.0.1:8080',
+          ssl: false,
+        }
         : undefined,
     },
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2000 } },
   ],
   bootstrap: [RootComponent],
 })
-export class AppModule {}
+export class AppModule { }

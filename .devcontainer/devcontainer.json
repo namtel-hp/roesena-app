@@ -1,0 +1,22 @@
+{
+  "name": "RöSeNa",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "dbaeumer.vscode-eslint"
+  ],
+  // ports for angular dev server and firebase tools
+  "forwardPorts": [
+    4000,
+    4200,
+    5001,
+    8080,
+    4400,
+    4500
+  ]
+}
