@@ -25,10 +25,14 @@ import { BaseEffects } from '../../state/basePages/effects/base.effects';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchModule } from '@shared/search/search.module';
 import { ConvertersModule } from '@shared/converters/converters.module';
-import { FooterComponent } from './root/footer/footer.component';
+import { DataProtectionComponent } from './data-protection/data-protection.component';
+import { MAT_BOTTOM_SHEET_DEFAULT_OPTIONS } from '@angular/material/bottom-sheet';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { FooterModule } from './footer/footer.module';
 
 @NgModule({
-  declarations: [AboutComponent, HelpComponent, NotFoundComponent, RootComponent, StartPageComponent, FooterComponent],
+  declarations: [AboutComponent, HelpComponent, NotFoundComponent, RootComponent, StartPageComponent, DataProtectionComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -45,9 +49,10 @@ import { FooterComponent } from './root/footer/footer.component';
     MatMenuModule,
     ConvertersModule,
     SearchModule,
+    FooterModule,
     StoreModule.forFeature(fromBase.baseFeatureKey, fromBase.reducer),
     EffectsModule.forFeature([BaseEffects]),
   ],
-  exports: [AboutComponent, HelpComponent, NotFoundComponent, RootComponent, StartPageComponent],
+  exports: [AboutComponent, DataProtectionComponent, HelpComponent, NotFoundComponent, RootComponent, StartPageComponent],
 })
 export class BasePagesModule {}
