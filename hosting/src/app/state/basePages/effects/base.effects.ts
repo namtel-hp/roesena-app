@@ -37,7 +37,7 @@ export class BaseEffects {
       if (user !== null && user.isConfirmedMember) {
         return this.firestore
           .collection<StoreableEvent>('events', (qFn) =>
-            qFn.where(`deadline`, '>=', new Date()).where('participantsArray', 'array-contains', user.id).orderBy('deadline')
+            qFn.where(`deadline`, '>=', new Date()).where(`participants.${user.id}.amount`, '==', -1).orderBy('deadline')
           )
           .snapshotChanges()
           .pipe(
