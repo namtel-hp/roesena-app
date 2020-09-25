@@ -1,7 +1,7 @@
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { takeUntil, take, filter, tap } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
 import { AppArticle } from 'src/app/utils/interfaces';
 import { ChipsInputService } from 'src/app/services/chips-input.service';
 import { Store } from '@ngrx/store';
@@ -10,7 +10,8 @@ import { SubscriptionService } from '@services/subscription.service';
 import { State } from '@state/articles/editor/reducers/editor.reducer';
 import { UpdateArticle, CreateArticle, DeleteArticle } from '@state/articles/editor/actions/editor.actions';
 import { MatDialog } from '@angular/material/dialog';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor',
@@ -34,15 +35,19 @@ export class EditorComponent implements OnDestroy {
     private store: Store<State>,
     public chips: ChipsInputService,
     private subs: SubscriptionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    titleService: Title
   ) {
+    titleService.setTitle('RöSeNa - Artikel Editor');
     this.store.dispatch(new LoadSingleArticle({ withImage: false }));
     this.store
       .select('articleEditor', 'isLoading')
       .pipe(takeUntil(this.subs.unsubscribe$))
       .subscribe({
         next: (isLoading) => {
-          if (!this.articleForm) return;
+          if (!this.articleForm) {
+            return;
+          }
           if (isLoading) {
             this.articleForm.disable();
           } else {
@@ -54,7 +59,6 @@ export class EditorComponent implements OnDestroy {
       .select('article', 'article')
       .pipe(
         filter((article) => article !== null),
-        take(1),
         takeUntil(this.subs.unsubscribe$)
       )
       .subscribe({
@@ -102,7 +106,7 @@ export class EditorComponent implements OnDestroy {
 }
 
 @Component({
-  selector: 'delete-dialog',
+  selector: 'app-delete-dialog',
   templateUrl: 'delete-dialog.html',
 })
 export class DeleteDialogComponent {}

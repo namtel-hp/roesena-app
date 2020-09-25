@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ElementRef } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { Observable, Subscription, of } from 'rxjs';
-import { map, tap, withLatestFrom, take, takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, withLatestFrom, take, takeUntil } from 'rxjs/operators';
 
 import { AppEvent } from 'src/app/utils/interfaces';
 import { Store } from '@ngrx/store';
@@ -9,6 +9,7 @@ import { State } from '@state/auth/my-events/reducers/events.reducer';
 import { SubscriptionService } from '@services/subscription.service';
 import { LoadEvents, EventsActions, RespondToEvent, EventsActionTypes } from '@state/auth/my-events/actions/events.actions';
 import { Actions, ofType } from '@ngrx/effects';
+import { Title } from '@angular/platform-browser';
 
 interface AppEventWithForm extends AppEvent {
   form: FormGroup;
@@ -37,6 +38,8 @@ export class MyEventsComponent implements OnInit, OnDestroy {
       });
     })
   );
+  displayedColumns = ['title', 'deadline', 'amount', 'open'];
+
   get cols(): number {
     return Math.ceil(this.hostRef.nativeElement.clientWidth / 550);
   }
@@ -45,8 +48,11 @@ export class MyEventsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private actions$: Actions<EventsActions>,
     private subs: SubscriptionService,
-    private hostRef: ElementRef<HTMLElement>
-  ) {}
+    private hostRef: ElementRef<HTMLElement>,
+    titleService: Title
+  ) {
+    titleService.setTitle('RöSeNa - Meine Events');
+  }
 
   ngOnInit() {
     this.store.dispatch(new LoadEvents());
@@ -54,7 +60,7 @@ export class MyEventsComponent implements OnInit, OnDestroy {
 
   onSubmit(eventId: string, amount: string, form: FormGroup) {
     form.disable();
-    this.store.dispatch(new RespondToEvent({ amount: parseInt(amount), id: eventId }));
+    this.store.dispatch(new RespondToEvent({ amount: parseInt(amount, 10), id: eventId }));
     this.actions$
       .pipe(
         ofType(EventsActionTypes.RespondToEventSuccess, EventsActionTypes.RespondToEventFailure),

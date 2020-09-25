@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchBarComponent, SearchSheet } from './search-bar/search-bar.component';
+import { SearchBarComponent, SearchSheetComponent } from './search-bar/search-bar.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,9 +14,10 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { CardsModule } from '@shared/cards/cards.module';
+import { HeadingsModule } from '@shared/headings/headings.module';
 
 @NgModule({
-  declarations: [SearchBarComponent, SearchSheet, SearchPageComponent],
+  declarations: [SearchBarComponent, SearchSheetComponent, SearchPageComponent],
   exports: [SearchBarComponent, SearchPageComponent],
   imports: [
     CommonModule,
@@ -25,6 +26,7 @@ import { CardsModule } from '@shared/cards/cards.module';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
+    HeadingsModule,
     MatChipsModule,
     MatAutocompleteModule,
     MatBottomSheetModule,

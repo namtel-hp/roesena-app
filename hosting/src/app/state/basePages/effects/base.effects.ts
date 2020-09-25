@@ -36,8 +36,10 @@ export class BaseEffects {
     switchMap((user) => {
       if (user !== null && user.isConfirmedMember) {
         return this.firestore
-          .collection<StoreableEvent>('events', (qFn) =>
-            qFn.where(`deadline`, '>=', new Date()).where(`participants.${user.id}.amount`, '==', -1).orderBy('deadline')
+          .collection<StoreableEvent>(
+            'events',
+            (qFn) => qFn.where(`deadline`, '>=', new Date())
+            // .where(`participants.${user.id}.amount`, '==', -1)
           )
           .snapshotChanges()
           .pipe(
@@ -71,20 +73,11 @@ export class BaseEffects {
     // if there are respondables
     filter((action) => action.payload.amount > 0),
     // switch to snackbar action
-    switchMap((action) => this.snackbar.open(`Unbeantwortete Termine: ${action.payload.amount}`, 'ANTWORTEN').onAction()),
+    switchMap((action) =>
+      this.snackbar.open(`Unbeantwortete Termine: ${action.payload.amount}`, 'ANTWORTEN', { duration: undefined }).onAction()
+    ),
     // navigate when action is clicked
     tap(() => this.router.navigate(['auth', 'my-events']))
-  );
-
-  @Effect({ dispatch: false })
-  pushUpdate$ = this.actions$.pipe(
-    ofType(ROOT_EFFECTS_INIT),
-    // listen to service worker updates
-    switchMap(() => this.swUpdate.available),
-    // show snackbar if there is one and listen for actions
-    switchMap(() => this.snackbar.open('Ein Update für die App ist bereit', 'UPDATE').onAction()),
-    // reload the browser on action
-    tap(() => this.browser.reload())
   );
 
   @Effect()
@@ -163,9 +156,7 @@ export class BaseEffects {
   constructor(
     private actions$: Actions<BaseActions>,
     private store: Store<State>,
-    private swUpdate: SwUpdate,
     private snackbar: MatSnackBar,
-    private browser: BrowserService,
     private firestore: AngularFirestore,
     private router: Router,
     private subs: SubscriptionService

@@ -14,6 +14,7 @@ import { LoadImage } from '@state/images/actions/image.actions';
 import { UpdateImage, CreateImage, DeleteImage } from '@state/images/editor/actions/image.actions';
 import { UrlLoaderService } from '@services/url-loader.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor',
@@ -39,8 +40,10 @@ export class EditorComponent implements OnDestroy {
     private store: Store<State>,
     private subs: SubscriptionService,
     private urlLoader: UrlLoaderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    titleService: Title
   ) {
+    titleService.setTitle('RöSeNa - Bild Editor');
     this.store.dispatch(new LoadImage());
     this.store
       .select('imageEditor', 'isLoading')
@@ -83,7 +86,7 @@ export class EditorComponent implements OnDestroy {
   }
 
   onSubmit() {
-    let updated: AppImage = {} as any;
+    const updated: AppImage = {} as any;
     Object.assign(updated, this.image);
     updated.tags = this.imageForm.get('tags').value;
     updated.created = new Date();
@@ -125,7 +128,7 @@ export class EditorComponent implements OnDestroy {
 }
 
 @Component({
-  selector: 'delete-dialog',
+  selector: 'app-delete-dialog',
   templateUrl: 'delete-dialog.html',
 })
 export class DeleteDialogComponent {}

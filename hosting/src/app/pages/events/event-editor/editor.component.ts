@@ -4,7 +4,7 @@ import { FormControl, Validators, FormGroup, AbstractControl, ValidatorFn } from
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Subscription } from 'rxjs';
 import { tap, map, filter, take, takeUntil } from 'rxjs/operators';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { AppEvent, AppPerson, Participant } from 'src/app/utils/interfaces';
 import { ChipsInputService } from 'src/app/services/chips-input.service';
@@ -16,6 +16,7 @@ import { LoadEvent } from '@state/events/actions/event.actions';
 import { LoadPersons, UpdateEvent, CreateEvent, DeleteEvent } from '@state/events/editor/actions/event.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor',
@@ -56,8 +57,10 @@ export class EditorComponent implements OnDestroy {
     public chips: ChipsInputService,
     private store: Store<State>,
     private subs: SubscriptionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    titleService: Title
   ) {
+    titleService.setTitle('RöSeNa - Event Editor');
     // dispatch the event to load the event that should be edited
     this.store.dispatch(new LoadEvent());
     // dispatch the event to load the persons who can be invited
@@ -67,7 +70,6 @@ export class EditorComponent implements OnDestroy {
       .select('events', 'event')
       .pipe(
         filter((event) => event !== null),
-        take(1),
         takeUntil(this.subs.unsubscribe$)
       )
       .subscribe({
@@ -166,7 +168,7 @@ export class EditorComponent implements OnDestroy {
         // remove the person if it is a participant
         if ((formEl.value as Participant[]).find((el) => el.id === person.id)) {
           // keep all persons, which do not have the id of the person that should be removed
-          formEl.setValue([...(formEl.value as Participant[]).filter((el) => el.id != person.id)]);
+          formEl.setValue([...(formEl.value as Participant[]).filter((el) => el.id !== person.id)]);
         }
       });
   }
@@ -253,7 +255,7 @@ export class EditorComponent implements OnDestroy {
 
   removePerson(person: Participant) {
     const formEl = this.participantsFormGroup.get('participants');
-    formEl.setValue([...(formEl.value as Participant[]).filter((el) => el.id != person.id)]);
+    formEl.setValue([...(formEl.value as Participant[]).filter((el) => el.id !== person.id)]);
   }
 
   // isPersonSelected(id: string): boolean {
@@ -285,7 +287,7 @@ export class EditorComponent implements OnDestroy {
 }
 
 @Component({
-  selector: 'delete-dialog',
+  selector: 'app-delete-dialog',
   templateUrl: 'delete-dialog.html',
 })
 export class DeleteDialogComponent {}
