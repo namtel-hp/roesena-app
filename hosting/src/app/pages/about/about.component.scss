@@ -1,0 +1,21 @@
+@import '../../shared/style-partials/variables.scss';
+
+.mat-list {
+  .mat-list-item {
+    height: unset;
+    margin: 8px 0;
+
+    .mat-line {
+      white-space: pre-line;
+
+      a:not(.mat-button) {
+        color: $primary;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
