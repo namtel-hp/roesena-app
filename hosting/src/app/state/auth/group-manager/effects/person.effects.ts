@@ -24,6 +24,8 @@ import { Store } from '@ngrx/store';
 import { State } from '../reducers/person.reducer';
 import { PageActions, PageActionTypes } from '@state/pagination/actions/page.actions';
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { CloudFunctionCallError } from '@utils/errors/cloud-function-call-error';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 
 @Injectable()
 export class PersonEffects {
@@ -111,6 +113,8 @@ export class PersonEffects {
       this.fns
         .httpsCallable(`confirmPerson/${action.payload.id}`)({})
         .pipe(
+          // report to analytics
+          tap(() => this.analytics.logEvent('confirm_person', { event_category: 'admin-action' })),
           catchError((err) => {
             console.log(err);
             return of(null);
@@ -129,7 +133,9 @@ export class PersonEffects {
           map(convertMany),
           takeUntil(this.subs.unsubscribe$),
           map(() => new DeletePersonSuccess()),
-          catchError((error) => of(new DeletePersonFailure({ error })))
+          // report to analytics
+          tap(() => this.analytics.logEvent('delete_person', { event_category: 'admin-action' })),
+          catchError((error) => of(new DeletePersonFailure({ error: new CloudFunctionCallError(error.error) })))
         )
     )
   );
@@ -143,8 +149,10 @@ export class PersonEffects {
         .pipe(
           map(convertMany),
           takeUntil(this.subs.unsubscribe$),
+          // report to analytics
+          tap(() => this.analytics.logEvent('edit_group', { event_category: 'admin-action' })),
           map(() => new AddGroupSuccess()),
-          catchError((error) => of(new AddGroupFailure({ error })))
+          catchError((error) => of(new AddGroupFailure({ error: new CloudFunctionCallError(error.error) })))
         )
     )
   );
@@ -158,8 +166,9 @@ export class PersonEffects {
         .pipe(
           map(convertMany),
           takeUntil(this.subs.unsubscribe$),
-          map(() => new RemoveGroupSuccess()),
-          catchError((error) => of(new RemoveGroupFailure({ error })))
+          // report to analytics
+          tap(() => this.analytics.logEvent('edit_group', { event_category: 'admin-action' })),
+          catchError((error) => of(new RemoveGroupFailure({ error: new CloudFunctionCallError(error.error) })))
         )
     )
   );
@@ -169,6 +178,7 @@ export class PersonEffects {
     private subs: SubscriptionService,
     private firestore: AngularFirestore,
     private fns: AngularFireFunctions,
+    private analytics: AngularFireAnalytics,
     private store: Store<State>
   ) {}
 }
