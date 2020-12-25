@@ -22,7 +22,7 @@ export class ContactComponent implements OnInit {
   contactForm = new FormGroup({
     subject: new FormControl('sonstiges', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    comment: new FormControl('', [Validators.required, Validators.maxLength(1000), Validators.minLength(10)]),
+    comment: new FormControl('', [Validators.required, Validators.maxLength(1000), Validators.minLength(1), Validators.pattern('^[a-zA-Z@äöüÄÖÜ .-]+$')]),
   });
 
   problemCheckboxes = [
@@ -30,7 +30,7 @@ export class ContactComponent implements OnInit {
     { text: 'Mein Account wird nicht freigeschaltet', checked: false },
     { text: 'Rückmeldung funktioniert nicht', checked: false },
     { text: 'Layout sieht verschoben aus', checked: false },
-    { text: 'Text ragt über Container heraus oder ist abgeschnitten', checked: false },
+    { text: 'Text ist abgeschnitten', checked: false },
     { text: 'tritt auf einem Mobilgerät auf', checked: false },
     { text: 'tritt am PC auf', checked: false },
   ];
