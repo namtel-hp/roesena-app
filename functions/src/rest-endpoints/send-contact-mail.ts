@@ -3,7 +3,7 @@ import * as cors from 'cors';
 import * as cookieParser from 'cookie-parser';
 import * as functions from 'firebase-functions';
 import { createTransport } from 'nodemailer';
-const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
+const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const client = new SecretManagerServiceClient();
 
 const app = express();
@@ -23,11 +23,11 @@ app.post('/', async (req, res) => {
   let responsePayloadPassword;
   try {
     const [accessResponsePassword] = await client.accessSecretVersion({
-      name: "projects/sechta-narren/secrets/mailpw/versions/latest",
+      name: 'projects/sechta-narren/secrets/mailpw/versions/latest',
     });
     if (!accessResponsePassword.payload || !accessResponsePassword.payload.data) {
       res.status(500).send({ error: 'empty response for password secret in cloud function' });
-    return;
+      return;
     }
     responsePayloadPassword = accessResponsePassword.payload.data.toString();
   } catch (e) {
@@ -37,10 +37,10 @@ app.post('/', async (req, res) => {
 
   // create smtp transport
   const transporter = createTransport({
-    host: "smtp.strato.de",
+    host: 'smtp.strato.de',
     port: 465,
     auth: {
-      user: "webmaster@roesena.de",
+      user: 'webmaster@roesena.de',
       pass: responsePayloadPassword,
     },
   });

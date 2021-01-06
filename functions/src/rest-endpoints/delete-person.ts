@@ -43,12 +43,9 @@ app.use(validateFirebaseIdToken);
 app.use(checkAdminGroupOrSelf);
 
 app.post('/:id', async (req, res) => {
-  // delete user with give id
-  // TODO: also delete firebase auth account
+  // delete user with given id
   try {
-    // delete the firestore person document
-    await admin.firestore().collection('persons').doc(req.params.id).delete();
-    // delete the auth user
+    // delete the auth user, the firestore document will be deleted automatically
     await admin.auth().deleteUser(req.params.id);
   } catch (error) {
     console.log(error);
